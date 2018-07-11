@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import '../components/SearchBoxStyles.css'
 
 class SearchBox extends Component {
   constructor(props) {
