@@ -15,7 +15,7 @@ function new_script(src) {
     })
 };
 // Promise Interface can ensure load the script only once
-var my_script = new_script('https://maps.googleapis.com/maps/api/js?sensor=false&libraries=drawing&key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&callback=initMap&v=3.32');
+var my_script = new_script('https://maps.googleapis.com/maps/api/js?libraries=drawing,places&key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&callback=initMap&v=3.32');
 
 class MapClass extends Component {
     constructor(props) {

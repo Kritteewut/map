@@ -5,6 +5,7 @@ import Polygon from './components/Polygon';
 import Polyline from './components/Polyline';
 import DrawOptionsPanel from './components/drawOptionsPanel';
 import DrawingTools from './components/drawingTools';
+import SearchBox from './components/searchBox';
 
 class App extends Component {
 
@@ -27,6 +28,7 @@ class App extends Component {
           <Polyline />
           <DrawOptionsPanel />
           <DrawingTools />
+          <SearchBox/>
         </MapClass>
       </div>
     );

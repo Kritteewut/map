@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 class DrawingTools extends Component {
     constructor(props) {
