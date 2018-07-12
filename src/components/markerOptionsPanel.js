@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class extends Component {
+class MarkerOptionsPanel extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -8,7 +8,13 @@ class extends Component {
         }
     }
     render() {
-        return (null)
+        return (
+            <div>
+                <button>
+                    5555
+                </button>
+            </div>
+        )
     }
 }
-export default null
+export default MarkerOptionsPanel

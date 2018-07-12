@@ -10,7 +10,7 @@ class Polygon extends Component {
         //this. = this..bind(this)
     }
     componentDidMount() {
-        console.log('hithere from polygon')
+
     }
     redrawPolygon() {
         this.polygon = new window.google.maps.Polygon({
@@ -22,8 +22,9 @@ class Polygon extends Component {
                 { lat: 35.5460, lng: 134.2622 }
             ],
             map: window.map,
+            visible: false
         })
-        console.log(this.polygon.getPath())
+        
     }
 
     render() {

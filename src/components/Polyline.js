@@ -12,7 +12,6 @@ class Polyline extends Component {
     }
 
     componentDidMount() {
-        console.log('hithere from polyline')
     }
 
     redrawPolyline() {
@@ -23,6 +22,7 @@ class Polyline extends Component {
             { lat: -34.397, lng: 150.644 }
             ],
             map: window.map,
+            visible: false
         })
     }
 

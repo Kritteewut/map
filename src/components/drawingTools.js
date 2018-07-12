@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 class DrawingTools extends Component {
     constructor(props) {
@@ -8,28 +8,48 @@ class DrawingTools extends Component {
         this.state = {}
         this.drawingManager = false
         this.renderDrawingTools = this.renderDrawingTools.bind(this)
+        this.overlayListener = this.overlayListener.bind(this)
+        this.mapListener = this.mapListener.bind(this)
 
-        //this.deleteme = this.deleteme.bind(this)
+        {/*
+        this.deleteme = this.deleteme.bind(this)
+        */}
     }
 
     renderDrawingTools() {
         this.drawingManager = new window.google.maps.drawing.DrawingManager({
-            drawingMode: window.google.maps.drawing.OverlayType.MARKER,
             drawingControl: true,
             drawingControlOptions: {
-                position: window.google.maps.ControlPosition.TOP_CENTER,
-                drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+                position: window.google.maps.ControlPosition.BOTTOM_CENTER,
+                drawingModes: ['polygon', 'polyline', 'marker',]
             },
-            markerOptions: { icon: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png' },
-            circleOptions: {
-                fillColor: '#ffff00',
-                fillOpacity: 1,
-                strokeWeight: 5,
-                clickable: false,
-                editable: true,
-            }
         })
         this.drawingManager.setMap(window.map);
+        this.mapListener()
+        this.overlayListener()
+
+    }
+    overlayListener() {
+        window.google.maps.event.addListener(this.drawingManager, 'overlaycomplete', function (event) {
+            if (event.type === 'polygon') {
+                var polygon = event.overlay;
+                console.log(polygon)
+
+            }
+            if (event.type === 'polyline') {
+                var polyline = event.overlay;
+                console.log(polyline)
+            }
+            if (event.type === 'marker') {
+                var marker = event.overlay;
+                console.log(marker)
+            }
+        });
+    }
+    mapListener() {
+        window.google.maps.event.trigger(this.drawingManager, 'click', function (e) {
+            
+        })
     }
     render() {
         this.renderDrawingTools()

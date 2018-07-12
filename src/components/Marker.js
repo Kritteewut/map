@@ -10,18 +10,24 @@ class Marker extends Component {
         //this. = this..bind(this)
     }
     componentDidMount() {
-        console.log('hithere from marker')
     }
+
     redrawMarker() {
         this.marker = new window.google.maps.Marker({
-            position: { lat: -34.397, lng: 150.644 },
+            position: this.props.coords,
             map: window.map,
-            title: 'Hello World!'
         })
+        var self = this
+        window.google.maps.event.addListener(self.marker, 'click', function (e) {
+            self.props.click(self.marker)
+        })
+
     }
+
 
     render() {
         this.redrawMarker()
+
         return (null);
     }
 }
