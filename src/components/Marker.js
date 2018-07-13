@@ -3,33 +3,30 @@ import { Component } from 'react';
 class Marker extends Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            isRender: false,
+            marker: []
+        }
         this.marker = false
-        this.redrawMarker = this.redrawMarker.bind(this)
 
+        this.redrawMarker = this.redrawMarker.bind(this)
         //this. = this..bind(this)
     }
-    componentDidMount() {
-    }
-
     redrawMarker() {
-        this.marker = new window.google.maps.Marker({
-            position: this.props.coords,
-            map: window.map,
-        })
         var self = this
-        window.google.maps.event.addListener(self.marker, 'click', function (e) {
-            self.props.click(self.marker)
-        })
-
+        if (this.props.btnTypeCheck === 'marker' && this.props.isMapClick === true) {
+            this.marker = new window.google.maps.Marker({
+                position: this.props.overlayDrawingCoords,
+                overlayIndex: this.props.overlayIndex,
+                map: window.map
+            })
+            this.props.addMarkerListener(this.marker)
+        }
     }
-
 
     render() {
         this.redrawMarker()
-
         return (null);
     }
 }
-
 export default Marker;

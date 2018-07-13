@@ -9,22 +9,22 @@ class Polygon extends Component {
 
         //this. = this..bind(this)
     }
-    componentDidMount() {
-
-    }
     redrawPolygon() {
-        this.polygon = new window.google.maps.Polygon({
-            path: [
-                { lat: 13.7739818, lng: 100.5464 },
-                { lat: 13.5544, lng: 134.2465 },
-                { lat: 35.5321, lng: 134.2454 },
-                { lat: 35.5396, lng: 134.2609 },
-                { lat: 35.5460, lng: 134.2622 }
-            ],
-            map: window.map,
-            visible: false
-        })
-        
+        var self = this
+        if (this.props.overlayDrawingCoords.length > 0 && this.props.btnTypeCheck === 'polygon') {
+            this.polygon = new window.google.maps.Polygon({
+                // path:,
+                // map: window.map,
+                // overlayIndex: 1,
+            })
+            window.google.maps.event.addListener(this.polygon, 'click', function () {
+                console.log(self.polygon, 'p')
+            })
+            
+            // var myLatLng = new window.google.maps.LatLng(this.props.overlayDrawingCoords[0]);
+            // this.polyline.getPath().push(myLatLng)
+        }
+
     }
 
     render() {

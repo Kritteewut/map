@@ -5,21 +5,22 @@ class MapClass extends Component {
     constructor(props) {
         super(props);
         this.initMap = this.initMap.bind(this)
-        this.mapEventHandler = this.mapEventHandler.bind(this)
 
         //this.deleteme = this.deleteme.bind(this)
         this.state = {
             isLoad: false,
-            status: 'start',
             coords: [],
         }
     }
-
+    componentWillMount() {
+        window.initMap = this.initMap
+    }
     componentDidMount() {
-         window.initMap = this.initMap
+
     }
 
     initMap() {
+        var self = this
         window.map = new window.google.maps.Map(document.getElementById('map'), {
             center: { lat: -34.397, lng: 150.644 },
             zoom: 8,
@@ -27,21 +28,11 @@ class MapClass extends Component {
         this.setState({
             isLoad: true
         })
-        this.mapEventHandler()
+        // window.google.maps.event.addListener(window.map, 'click', function (event) {
+        //     console.log(window.map)
+        // })
     }
-    mapEventHandler() {
-        var self = this
-        window.google.maps.event.addListener(window.map, 'rightclick', function (e) {
-            window.map.setOptions({
-                draggableCursor: 'grab',
-                clickableIcons: true,
-                draggingCursor: 'grab',
-            })
-            window.google.maps.event.clearInstanceListeners(window.map)
-            console.log('event is clear')
-            self.mapEventHandler()
-        })
-    }
+
     render() {
         var childrenOutput = null;
         if (this.state.isLoad === true) {
