@@ -4,6 +4,8 @@ import Marker from './components/Marker';
 import Polygon from './components/Polygon';
 import Polyline from './components/Polyline';
 import DrawOptionsPanel from './components/DrawOptionsPanel';
+import DrawingTools from './components/drawingTools';
+import SearchBox from './components/searchBox';
 
 function new_script(src) {
   return new Promise(function (resolve, reject) {
@@ -20,7 +22,7 @@ function new_script(src) {
 };
 
 // Promise Interface can ensure load the script only once
-var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=drawing&key=AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo&callback=initMap&v=3.32');
+var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=drawing,places&key=AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo&callback=initMap&v=3.32');
 
 class App extends Component {
 
@@ -220,20 +222,19 @@ class App extends Component {
           >
           </Polyline>*/}
 
-
+          <SearchBox
+            status={this.state.status}
+          />
         </MapClass>
 
         <DrawOptionsPanel
           status={this.state.status}
-          onBtnTypeChange={this.onBtnTypeChange}
-          onBtnRender={this.onBtnRender}
           onAddListenerMarkerBtn={this.onAddListenerMarkerBtn}
           onAddListenerPolygonBtn={this.onAddListenerPolygonBtn}
           onAddListenerPolylineBtn={this.onAddListenerPolylineBtn}
           onAddListenerGrabBtn={this.onAddListenerGrabBtn}
-          onAddListenerSaveBtn={this.onAddListenerSaveBtn}
-        >
-        </DrawOptionsPanel>
+        />
+
       </div>
     );
   }
