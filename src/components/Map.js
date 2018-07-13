@@ -1,11 +1,9 @@
-
 import React, { Component } from 'react';
 
 class MapClass extends Component {
     constructor(props) {
         super(props);
         this.initMap = this.initMap.bind(this)
-
         //this.deleteme = this.deleteme.bind(this)
         this.state = {
             isLoad: false,
@@ -15,10 +13,6 @@ class MapClass extends Component {
     componentWillMount() {
         window.initMap = this.initMap
     }
-    componentDidMount() {
-
-    }
-
     initMap() {
         var self = this
         window.map = new window.google.maps.Map(document.getElementById('map'), {
@@ -28,9 +22,9 @@ class MapClass extends Component {
         this.setState({
             isLoad: true
         })
-        // window.google.maps.event.addListener(window.map, 'click', function (event) {
-        //     console.log(window.map)
-        // })
+        window.google.maps.event.addListener(window.map, 'click', function (event) {
+            console.log(window.map)
+        })
     }
 
     render() {

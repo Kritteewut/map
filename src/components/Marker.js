@@ -18,7 +18,7 @@ class Marker extends Component {
             this.marker = new window.google.maps.Marker({
                 position: this.props.overlayDrawingCoords,
                 overlayIndex: this.props.overlayIndex,
-                map: window.map
+                map: window.map,
             })
             this.props.addMarkerListener(this.marker)
         }
