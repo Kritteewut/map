@@ -3,8 +3,9 @@ import MapClass from './components/Map'
 import Marker from './components/Marker';
 import Polygon from './components/Polygon';
 import Polyline from './components/Polyline';
-import DrawOptionsPanel from './components/DrawOptionsPanel';
+import DrawOptionsPanel from './components/drawOptionsPanel';
 import SearchBox from './components/searchBox';
+import AddBtn from  './components/AddBtn'
 
 function new_script(src) {
   return new Promise(function (resolve, reject) {
@@ -269,6 +270,7 @@ class App extends Component {
 
         </MapClass>
 
+        <AddBtn/>
 
         <DrawOptionsPanel
           status={this.state.status}
