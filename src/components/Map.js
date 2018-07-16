@@ -22,7 +22,6 @@ class MapClass extends Component {
         this.setState({
             isLoad: true
         })
-      
     }
 
     render() {

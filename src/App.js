@@ -34,10 +34,6 @@ class App extends Component {
       overlayObject: [],
       overlayDrawingCoords: [],
       overlayIndex: 0,
-
-      defaultCoords: [],
-      defaultIndex: 0,
-
       isMapClick: false,
       selectedOverlay: [],
       isDrawing: false,
@@ -49,6 +45,8 @@ class App extends Component {
     this.onAddListenerGrabBtn = this.onAddListenerGrabBtn.bind(this)
     this.addMarkerListener = this.addMarkerListener.bind(this)
     this.addPolygonListener = this.addPolygonListener.bind(this)
+    this.setSelectOverlay = this.setSelectOverlay.bind(this)
+
   }
 
   do_load = () => {
@@ -87,17 +85,16 @@ class App extends Component {
   onAddListenerPolygonBtn(btn) {
     var self = this
     window.google.maps.event.addDomListener(btn, 'click', function () {
-
       if (!(self.onBtnTypeChange('polygon'))) {
         console.log('polygon is click')
-        if (self.state.isDrawing === true) {
+        if (self.state.isDrawing === true && self.state.overlayDrawingCoords.length > 1) {
           self.onAddOverlayObject(self.state.selectedOverlay)
-          self.onAddListenerPolygonBtn(self.state.selectedOverlay)
           self.onAddOverlayCoords(self.state.overlayDrawingCoords)
           self.setState((prevState) => {
-            return { overlayIndex: prevState.overlayIndex + 1 };
-          });
-
+            return {
+              overlayIndex: prevState.overlayIndex + 1,
+            };
+          }, () => console.log(self.state.overlayIndex));
         }
         self.resetSelectedOverlay()
         self.onOverlayDrawingCoordsClear()
@@ -121,12 +118,16 @@ class App extends Component {
   }
   onAddListenerGrabBtn(btn) {
     var self = this
-
     window.google.maps.event.addDomListener(btn, 'click', function () {
-      if (!(self.onBtnTypeChange('grab'))) {
-        console.log('grab is click')
-        window.google.maps.event.clearInstanceListeners(window.map)
-      }
+      console.log('grab is click')
+      window.google.maps.event.addListener(window.map, 'rightclick', function () {
+        self.setState({
+          coords: []
+        }, () => console.log('aww'))
+      })
+      //window.google.maps.event.clearInstanceListeners(window.map)
+      //window.map.setOptions({})
+
     })
   }
   onAddOverlayObject(overlay) {
@@ -134,14 +135,14 @@ class App extends Component {
     temp.push(overlay)
     this.setState({
       overlayObject: temp
-    }, () => console.log(this.state.overlayObject))
+    }, () => console.log(this.state.overlayObject, 'overlay object'))
   }
   onAddOverlayCoords(coords) {
     var overlayCoords = this.state.overlayCoords
     overlayCoords.push(coords)
     this.setState({
       overlayCoords: overlayCoords
-    }, () => console.log(this.state.overlayCoords))
+    }, () => console.log(this.state.overlayCoords, 'overlayCoords'))
   }
   drawMarker() {
     var self = this
@@ -178,9 +179,6 @@ class App extends Component {
   }
   drawPolygon() {
     var self = this
-    let overlayDrawingCoords = self.state.overlayDrawingCoords
-    let overlayObject = self.state.overlayObject
-    let overlayIndex = self.state.overlayIndex
 
     window.google.maps.event.clearInstanceListeners(window.map)
     window.google.maps.event.addListener(window.map, 'click', function (event) {
@@ -189,33 +187,27 @@ class App extends Component {
       let lng = event.latLng.lng()
 
       if (!(self.state.isDrawing)) {
-        var polygon = new window.google.maps.Polygon({
-          path: [{ lat, lng }],
-          overlayIndex: self.state.overlayIndex,
-          map: window.map,
-          overlayType: 'polygon'
-        })
-        overlayDrawingCoords.push({ lat, lng })
-        self.setSelectOverlay(polygon)
+        let overlayIndex = self.state.overlayIndex
+
         self.setState({
-          btnTypeCheck: '',
+          overlayDrawingCoords: [{ lat, lng }],
+          overlayIndex: overlayIndex,
           isDrawing: true,
-          overlayDrawingCoords: overlayDrawingCoords,
-        })
+          btnTypeCheck: ''
+        }, () => console.log(self.state.overlayDrawingCoords, 'init'))
       } else {
-        var myLatLng = new window.google.maps.LatLng(lat, lng);
-        self.state.selectedOverlay.getPath().push(myLatLng)
+        let overlayDrawingCoords = self.state.overlayDrawingCoords
         overlayDrawingCoords.push({ lat, lng })
         self.setState({
           overlayDrawingCoords: overlayDrawingCoords,
-        })
+        }, () => console.log(self.state.overlayDrawingCoords, 'drawing', self.state.overlayDrawingCoords.length))
       }
     })
   }
   setSelectOverlay(overlay) {
     this.setState({
       selectedOverlay: overlay
-    })
+    }, () => console.log(this.state.selectedOverlay, 'selectedOverlay'))
   }
   resetSelectedOverlay() {
     this.setState({
@@ -229,6 +221,7 @@ class App extends Component {
     })
   }
   addPolygonListener(polygon) {
+
     var self = this
     window.google.maps.event.addListener(polygon, 'click', function () {
       console.log(polygon)
@@ -248,24 +241,22 @@ class App extends Component {
     return (
       <div className="App">
         <MapClass>
-
           <Marker
 
           />
           <Polygon
-          // btnTypeCheck={this.state.btnTypeCheck}
-          // overlayDrawingCoords={this.state.overlayDrawingCoords}
-          // isMapClick={this.state.isMapClick}
-          // addPolygonListener={this.addPolygonListener}
-          // overlayIndex={this.state.overlayIndex}
+            overlayDrawingCoords={this.state.overlayDrawingCoords}
+            overlayIndex={this.state.overlayIndex}
+            addPolygonListener={this.addPolygonListener}
+            setSelectOverlay={this.setSelectOverlay}
           />
           <Polyline
-
           />
 
           <SearchBox
             status={this.state.status}
           />
+
 
         </MapClass>
 
