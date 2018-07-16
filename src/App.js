@@ -4,7 +4,6 @@ import Marker from './components/Marker';
 import Polygon from './components/Polygon';
 import Polyline from './components/Polyline';
 import DrawOptionsPanel from './components/DrawOptionsPanel';
-import DrawingTools from './components/drawingTools';
 import SearchBox from './components/searchBox';
 
 function new_script(src) {
@@ -35,17 +34,19 @@ class App extends Component {
       overlayObject: [],
       overlayDrawingCoords: [],
       overlayIndex: 0,
+
+      defaultCoords: [],
+      defaultIndex: 0,
+
       isMapClick: false,
       selectedOverlay: [],
+      isDrawing: false,
+      overlayCoords: [],
     }
-    this.onBtnTypeChange = this.onBtnTypeChange.bind(this)
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
     this.onAddListenerPolylineBtn = this.onAddListenerPolylineBtn.bind(this)
     this.onAddListenerGrabBtn = this.onAddListenerGrabBtn.bind(this)
-    this.onAddListenerSaveBtn = this.onAddListenerSaveBtn.bind(this)
-    this.onAddOverlayObject = this.onAddOverlayObject.bind(this)
-    this.drawMarker = this.drawMarker.bind(this)
     this.addMarkerListener = this.addMarkerListener.bind(this)
     this.addPolygonListener = this.addPolygonListener.bind(this)
   }
@@ -58,14 +59,13 @@ class App extends Component {
       self.setState({ 'status': 'error' });
     })
   }
-
   onBtnTypeChange(type) {
     if (this.state.btnTypeCheck === type) {
       return true
     } else {
       this.setState({
         btnTypeCheck: type
-      }, console.log(type, 'type'))
+      })
     }
   }
   onOverlayDrawingCoordsClear() {
@@ -76,6 +76,7 @@ class App extends Component {
   onAddListenerMarkerBtn(btn) {
     var self = this
     window.google.maps.event.addDomListener(btn, 'click', function () {
+      self.resetSelectedOverlay()
       self.onOverlayDrawingCoordsClear()
       if (!(self.onBtnTypeChange('marker'))) {
         self.drawMarker()
@@ -86,16 +87,31 @@ class App extends Component {
   onAddListenerPolygonBtn(btn) {
     var self = this
     window.google.maps.event.addDomListener(btn, 'click', function () {
-      self.onOverlayDrawingCoordsClear()
+
       if (!(self.onBtnTypeChange('polygon'))) {
         console.log('polygon is click')
+        if (self.state.isDrawing === true) {
+          self.onAddOverlayObject(self.state.selectedOverlay)
+          self.onAddListenerPolygonBtn(self.state.selectedOverlay)
+          self.onAddOverlayCoords(self.state.overlayDrawingCoords)
+          self.setState((prevState) => {
+            return { overlayIndex: prevState.overlayIndex + 1 };
+          });
+
+        }
+        self.resetSelectedOverlay()
+        self.onOverlayDrawingCoordsClear()
         self.drawPolygon()
+        self.setState({
+          isDrawing: false
+        })
       }
     })
   }
   onAddListenerPolylineBtn(btn) {
     var self = this
     window.google.maps.event.addDomListener(btn, 'click', function () {
+      self.resetSelectedOverlay()
       self.onOverlayDrawingCoordsClear()
       if (!(self.onBtnTypeChange('polyline'))) {
         console.log('polyline is click')
@@ -113,56 +129,52 @@ class App extends Component {
       }
     })
   }
-  onAddListenerSaveBtn(btn) {
-    var self = this
-    window.google.maps.event.addDomListener(btn, 'click', function () {
-      if (!(self.onBtnTypeChange('save'))) {
-        window.google.maps.event.clearListeners(window.map, 'click')
-      }
-    })
-  }
   onAddOverlayObject(overlay) {
     var temp = this.state.overlayObject
     temp.push(overlay)
     this.setState({
       overlayObject: temp
-    })
+    }, () => console.log(this.state.overlayObject))
   }
-
+  onAddOverlayCoords(coords) {
+    var overlayCoords = this.state.overlayCoords
+    overlayCoords.push(coords)
+    this.setState({
+      overlayCoords: overlayCoords
+    }, () => console.log(this.state.overlayCoords))
+  }
   drawMarker() {
     var self = this
     let overlayDrawingCoords = self.state.overlayDrawingCoords
     let overlayObject = self.state.overlayObject
     let overlayIndex = self.state.overlayIndex
+    // window.google.maps.event.clearInstanceListeners(window.map)
+    // window.google.maps.event.addListener(window.map, 'mousedown', function (event) {
 
-    window.google.maps.event.clearInstanceListeners(window.map)
-    window.google.maps.event.addListener(window.map, 'mousedown', function (event) {
+    //   let lat = event.latLng.lat()
+    //   let lng = event.latLng.lng()
 
-      let lat = event.latLng.lat()
-      let lng = event.latLng.lng()
-
-      overlayDrawingCoords = { lat, lng }
-      console.log(overlayDrawingCoords)
-      self.setState({
-        isMapClick: true,
-        overlayDrawingCoords: overlayDrawingCoords
-      })
-    })
-    window.google.maps.event.addListener(window.map, 'mouseup', function (event) {
-      overlayIndex += 1
-      overlayObject.push({
-        overlayDrawingCoords,
-        overlayIndex
-      })
-      self.setState({
-        isMapClick: false,
-        overlayIndex: overlayIndex,
-        overlayObject: overlayObject,
-      }, () => console.log(overlayObject))
-    })
+    //   overlayDrawingCoords = { lat, lng }
+    //   console.log(overlayDrawingCoords)
+    //   self.setState({
+    //     isMapClick: true,
+    //     overlayDrawingCoords: overlayDrawingCoords
+    //   })
+    // })
+    // window.google.maps.event.addListener(window.map, 'mouseup', function (event) {
+    //   overlayIndex += 1
+    //   overlayObject.push({
+    //     overlayDrawingCoords,
+    //     overlayIndex
+    //   })
+    //   self.setState({
+    //     isMapClick: false,
+    //     overlayIndex: overlayIndex,
+    //     overlayObject: overlayObject,
+    //   }, () => console.log(overlayObject))
+    // })
   }
   drawPolyline() {
-
   }
   drawPolygon() {
     var self = this
@@ -171,26 +183,44 @@ class App extends Component {
     let overlayIndex = self.state.overlayIndex
 
     window.google.maps.event.clearInstanceListeners(window.map)
-    window.google.maps.event.addListener(window.map, 'mousedown', function (event) {
+    window.google.maps.event.addListener(window.map, 'click', function (event) {
 
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
 
-      overlayDrawingCoords.push({ lat, lng })
-      console.log(overlayDrawingCoords)
-      self.setState({
-        isMapClick: true,
-        overlayDrawingCoords: overlayDrawingCoords
-      })
-    })
-    window.google.maps.event.addListener(window.map, 'mouseup', function (event) {
-      self.setState({ isMapClick: false })
+      if (!(self.state.isDrawing)) {
+        var polygon = new window.google.maps.Polygon({
+          path: [{ lat, lng }],
+          overlayIndex: self.state.overlayIndex,
+          map: window.map,
+          overlayType: 'polygon'
+        })
+        overlayDrawingCoords.push({ lat, lng })
+        self.setSelectOverlay(polygon)
+        self.setState({
+          btnTypeCheck: '',
+          isDrawing: true,
+          overlayDrawingCoords: overlayDrawingCoords,
+        })
+      } else {
+        var myLatLng = new window.google.maps.LatLng(lat, lng);
+        self.state.selectedOverlay.getPath().push(myLatLng)
+        overlayDrawingCoords.push({ lat, lng })
+        self.setState({
+          overlayDrawingCoords: overlayDrawingCoords,
+        })
+      }
     })
   }
   setSelectOverlay(overlay) {
     this.setState({
       selectedOverlay: overlay
     })
+  }
+  resetSelectedOverlay() {
+    this.setState({
+      selectedOverlay: []
+    }, console.log('select is clear'))
   }
   addMarkerListener(marker) {
     var self = this
@@ -215,26 +245,19 @@ class App extends Component {
         self.do_load()
       }, 0);
     }
-
     return (
       <div className="App">
         <MapClass>
 
           <Marker
-            btnTypeCheck={this.state.btnTypeCheck}
-            overlayDrawingCoords={this.state.overlayDrawingCoords}
-            isMapClick={this.state.isMapClick}
-            addMarkerListener={this.addMarkerListener}
-            overlayIndex={this.state.overlayIndex}
 
           />
-
           <Polygon
-            btnTypeCheck={this.state.btnTypeCheck}
-            overlayDrawingCoords={this.state.overlayDrawingCoords}
-            isMapClick={this.state.isMapClick}
-            addPolygonListener={this.addPolygonListener}
-            overlayIndex={this.state.overlayIndex}
+          // btnTypeCheck={this.state.btnTypeCheck}
+          // overlayDrawingCoords={this.state.overlayDrawingCoords}
+          // isMapClick={this.state.isMapClick}
+          // addPolygonListener={this.addPolygonListener}
+          // overlayIndex={this.state.overlayIndex}
           />
           <Polyline
 
@@ -243,7 +266,9 @@ class App extends Component {
           <SearchBox
             status={this.state.status}
           />
+
         </MapClass>
+
 
         <DrawOptionsPanel
           status={this.state.status}
