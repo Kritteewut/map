@@ -5,28 +5,30 @@ class Polygon extends Component {
         super(props);
         this.state = {}
         this.polygon = false
-        this.redrawPolygon = this.redrawPolygon.bind(this)
 
+        this.redrawPolygon = this.redrawPolygon.bind(this)
         //this. = this..bind(this)
     }
     redrawPolygon() {
+
         var overlayDrawingCoords = this.props.overlayDrawingCoords
         var overlayIndex = this.props.overlayIndex
-        if (this.polygon === false) {
+        if (this.props.isDrawing === 'polygon') {
+            this.isRender = true
             this.polygon = new window.google.maps.Polygon({
                 path: overlayDrawingCoords,
                 map: window.map,
-                draggable: true,
                 overlayIndex: overlayIndex,
+                overlayType: 'polygon',
+                suppressUndo: true
             })
-            console.log(this.polygon, 'polygon is create', )
+            this.props.addPolygonListener(this.polygon)
         }
         else {
             if (this.props.overlayDrawingCoords.length > 0) {
                 this.polygon.setOptions({
                     path: overlayDrawingCoords,
                 })
-                console.log(this.polygon.getPath(), 'polygon is drawing', )
             }
         }
     }

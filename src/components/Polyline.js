@@ -6,23 +6,32 @@ class Polyline extends Component {
         super(props);
         this.state = {}
         this.polyline = false
+
         this.redrawPolyline = this.redrawPolyline.bind(this)
 
         //this. = this..bind(this)
     }
     redrawPolyline() {
-        // var self = this
-        // if (this.props.btnTypeCheck === 'polyline' && this.props.isMapClick === true) {
-        //     this.polyline = new window.google.maps.Polyline({
-        //         path: this.props.overlayDrawingCoords,
-        //         overlayIndex: this.props.overlayIndex,
-        //         map: window.map,
-        //     })
-        //     this.props.addMarkerListener(this.polyline)
-        //}
-
-        // var myLatLng = new window.google.maps.LatLng(this.props.overlayDrawingCoords[0]);
-        // this.polyline.getPath().push(myLatLng)
+        var overlayDrawingCoords = this.props.overlayDrawingCoords
+        var overlayIndex = this.props.overlayIndex
+        if (this.props.isDrawing === 'polyline') {
+            this.isRender = true
+            this.polyline = new window.google.maps.Polyline({
+                path: overlayDrawingCoords,
+                map: window.map,
+                overlayIndex: overlayIndex,
+                overlayType: 'polyline',
+                suppressUndo: true,
+            })
+            this.props.addPolylineListener(this.polyline)
+        }
+        else {
+            if (this.props.overlayDrawingCoords.length > 0) {
+                this.polyline.setOptions({
+                    path: overlayDrawingCoords,
+                })
+            }
+        }
     }
     render() {
         this.redrawPolyline()

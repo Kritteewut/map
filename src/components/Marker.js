@@ -14,16 +14,15 @@ class Marker extends Component {
     }
     redrawMarker() {
         var self = this
-        //if (this.props.btnTypeCheck === 'marker' && this.props.isMapClick === true) {
-        // this.marker = new window.google.maps.Marker({
-        //     position: this.props.overlayDrawingCoords,
-        //     //overlayIndex: this.props.overlayIndex,
-        //     map: window.map,
-        //     draggable: true
-        // })
-        // console.log(this.marker)
-        //this.props.addMarkerListener(this.marker)
-        // }
+        if (this.props.isDrawing === 'marker' && this.props.overlayDrawingCoords.length > 0) {
+            this.marker = new window.google.maps.Marker({
+                position: this.props.overlayDrawingCoords[0],
+                overlayIndex: this.props.overlayIndex,
+                map: window.map,
+                overlayType: 'marker'
+            })
+            this.props.addMarkerListener(this.marker)
+        }
     }
 
     render() {
