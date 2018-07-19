@@ -1,37 +1,20 @@
 import React, { Component } from 'react';
+import zIndex from '../../node_modules/@material-ui/core/styles/zIndex';
 
 class MapClass extends Component {
     constructor(props) {
         super(props);
         this.initMap = this.initMap.bind(this)
-        this.getGeoLocation = this.getGeoLocation.bind(this)
 
         //this.deleteme = this.deleteme.bind(this)
         this.state = {
             isLoad: false,
             zoom: 15,
             center: { lat: 13, lng: 100 },
-            testState: '',
         }
-    }
-    componentWillMount() {
-        this.getGeoLocation()
     }
     componentDidMount() {
         window.initMap = this.initMap
-    }
-    getGeoLocation() {
-        navigator.geolocation.getCurrentPosition(position => {
-            console.log(position.coords, 'getGeoIsActive')
-            this.setState({
-                center: {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                },
-                zoom: 15,
-            })
-        })
-
     }
     initMap() {
         var self = this
@@ -62,7 +45,8 @@ class MapClass extends Component {
                     right: 0,
                     bottom: 0,
                     justifyContent: 'flex-end',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    zIndex: -1,
                 }}
                 id="map">
                 {childrenOutput}

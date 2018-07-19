@@ -3,11 +3,19 @@ import MapClass from './components/Map'
 import Marker from './components/Marker';
 import Polygon from './components/Polygon';
 import Polyline from './components/Polyline';
-import DrawOptionsPanel from './components/drawOptionsPanel';
 import SearchBox from './components/searchBox';
 import AddBtn from './components/AddBtn'
 import ExampleLine from './components/ExampleLine';
 import ExamplePolygon from './components/ExamplePolygon';
+import { db } from './config/firebase'
+import NiceModal from './components/Modal'
+import GeolocatedMe from './components/Geolocation'
+import IconLabelButtons from './components/DrawingBtn'
+import { Button } from '../node_modules/@material-ui/core';
+import UserLocationMarker from './components/UserLocationMarker';
+
+const shapesRef = db.collection('shapes')
+const planRef = db.collection('plan')
 
 function new_script(src) {
   return new Promise(function (resolve, reject) {
@@ -24,7 +32,7 @@ function new_script(src) {
 };
 
 // Promise Interface can ensure load the script only once
-var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places&key=AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo&callback=initMap&v=3.32');
+var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places&key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&callback=initMap&v=3.32');
 var my_script2 = new_script('https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.0.2/jsts.min.js')
 
 class App extends Component {
@@ -41,6 +49,7 @@ class App extends Component {
       isFirstDraw: true,
       exampleLineCoords: [],
       examplePolygonCoords: [],
+      userLocationCoords: [],
       polylineLength: 0,
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
@@ -53,6 +62,7 @@ class App extends Component {
     this.onPolylineLengthCompute = this.onPolylineLengthCompute.bind(this)
     this.onSquereMetersTrans = this.onSquereMetersTrans.bind(this)
     this.onAddPlan = this.onAddPlan.bind(this)
+    this.getGeolocation = this.getGeolocation.bind(this)
 
   }
 
@@ -99,51 +109,36 @@ class App extends Component {
     this.onExampleLineReset()
     //this.onResetSelectedOverlay()
   }
-  onAddListenerMarkerBtn(btn) {
-    var self = this
-    window.google.maps.event.addDomListener(btn, 'click', function () {
-      if (!(self.onBtnTypeChange('marker'))) {
-        console.log('marker is click')
-        self.onUtilitiesMethod()
-        self.onClearSomeMapEventListener()
-        self.onSetDrawingCursor()
-        self.drawMarker()
-      }
-    })
+  onAddListenerMarkerBtn() {
+    if (!(this.onBtnTypeChange('marker'))) {
+      this.onUtilitiesMethod()
+      this.onClearSomeMapEventListener()
+      this.onSetDrawingCursor()
+      this.drawMarker()
+    }
   }
-  onAddListenerPolygonBtn(btn) {
-    var self = this
-    window.google.maps.event.addDomListener(btn, 'click', function () {
-      if (!(self.onBtnTypeChange('polygon'))) {
-        console.log('polygon is click')
-        self.onUtilitiesMethod()
-        self.onClearSomeMapEventListener()
-        self.onSetDrawingCursor()
-        self.drawPolygon()
-      }
-    })
+  onAddListenerPolygonBtn() {
+    if (!(this.onBtnTypeChange('polygon'))) {
+      this.onUtilitiesMethod()
+      this.onClearSomeMapEventListener()
+      this.onSetDrawingCursor()
+      this.drawPolygon()
+    }
   }
-  onAddListenerPolylineBtn(btn) {
-    var self = this
-    window.google.maps.event.addDomListener(btn, 'click', function () {
-      if (!(self.onBtnTypeChange('polyline'))) {
-        console.log('polyline is click')
-        self.onUtilitiesMethod()
-        self.onClearSomeMapEventListener()
-        self.onSetDrawingCursor()
-        self.drawPolyline()
-      }
-    })
+  onAddListenerPolylineBtn() {
+    if (!(this.onBtnTypeChange('polyline'))) {
+      this.onUtilitiesMethod()
+      this.onClearSomeMapEventListener()
+      this.onSetDrawingCursor()
+      this.drawPolyline()
+    }
   }
-  onAddListenerGrabBtn(btn) {
-    var self = this
-    window.google.maps.event.addDomListener(btn, 'click', function () {
-      self.onUtilitiesMethod()
-      self.onClearSomeMapEventListener()
-      self.onSetDragMapCursor()
-      self.setState({
-        btnTypeCheck: ''
-      })
+  onAddListenerGrabBtn() {
+    this.onUtilitiesMethod()
+    this.onClearSomeMapEventListener()
+    this.onSetDragMapCursor()
+    this.setState({
+      btnTypeCheck: ''
     })
   }
   onAddOverlayObject(overlay) {
@@ -315,7 +310,7 @@ class App extends Component {
     this.setState(
       overlayCoords[overlayIndex].coords = editCoords
     )
-    console.log(this.state.overlayCoords,'ediited coords')
+    console.log(this.state.overlayCoords, 'ediited coords')
   }
 
   onSetDrawingCursor() {
@@ -358,13 +353,80 @@ class App extends Component {
 
     return console.log('พื้นที่คือ ', rnwString)
   }
-  onAddPlan() {
-    // var overlayCoords = this.state.overlayCoords
-    this.setState({
+  onSaveToFirestore() {
+    let self = this
+    let overlayCoords = this.state.overlayCoords
+    overlayCoords.map(value => {
+      // add coords array to cloud firestore
+      shapesRef.add({
+        // add data here
+        coords: value.coords,
+        overlayType: value.overlayType,
+        //planId: value['planId'],
+        //overlayOptions: value['overlayOptions'],
+      }).then(
+        console.log('notice me senpai!')
+      )
+      return null;
+    })
+    self.setState({
       overlayCoords: []
+    }, () => self.onOverlayRedraw())
+  }
+  onOverlayRedraw() {
+    let self = this
+    let overlayCoords = this.state.overlayCoords
+
+    shapesRef.get().then(function (querySnapshot) {
+      querySnapshot.forEach(function (doc) {
+
+        let coords = doc.data().coords
+        let overlayIndex = doc.id
+        let overlayType = doc.data().overlayType
+
+        overlayCoords.push({
+          coords: coords,
+          overlayIndex: overlayIndex,
+          overlayType: overlayType,
+          overlayDrawType: 'redraw'
+        })
+      })
+      self.setState({
+        overlayCoords: overlayCoords
+      })
     })
   }
-  //rederrr
+  onAddPlan(planName) {
+    planRef.add({
+      planName
+    })
+
+    planRef.onSnapshot(function (snapshot) {
+      snapshot.docChanges().forEach(function (change) {
+        if (change.type === "added") {
+          console.log("New city: ", change.doc.data(), change.doc.id);
+        }
+        if (change.type === "modified") {
+          console.log("Modified city: ", change.doc.data());
+        }
+        if (change.type === "removed") {
+          console.log("Removed city: ", change.doc.data());
+        }
+      });
+    });
+
+  }
+  getGeolocation() {
+    navigator.geolocation.getCurrentPosition(position => {
+      console.log(position.coords)
+      window.map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude })
+      window.map.setZoom(18)
+      window.map.panTo({ lat: position.coords.latitude, lng: position.coords.longitude })
+      this.setState({
+        userLocationCoords: [{ lat: position.coords.latitude, lng: position.coords.longitude }]
+      })
+    })
+  }
   render() {
     var self = this;
     if (self.state.status === 'start') {
@@ -374,7 +436,19 @@ class App extends Component {
       }, 0);
     }
     return (
-      <div className="App">
+      <div
+        className="App"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          zIndex: -1,
+        }}
+      >
         <MapClass>
           {this.state.overlayCoords.map(value => {
             let overlayCoords = value.coords
@@ -394,14 +468,15 @@ class App extends Component {
               )
             }
             if (value.overlayType === 'polyline') {
-              return (<Polyline
-                key={overlayIndex}
-                overlayCoords={overlayCoords}
-                overlayIndex={overlayIndex}
-                overlayDrawType={overlayDrawType}
-                addPolylineListener={this.addPolylineListener}
-                onPolylineLengthCompute={this.onPolylineLengthCompute}
-              />)
+              return (
+                <Polyline
+                  key={overlayIndex}
+                  overlayCoords={overlayCoords}
+                  overlayIndex={overlayIndex}
+                  overlayDrawType={overlayDrawType}
+                  addPolylineListener={this.addPolylineListener}
+                  onPolylineLengthCompute={this.onPolylineLengthCompute}
+                />)
             }
             if (value.overlayType === 'marker') {
               return (
@@ -427,17 +502,24 @@ class App extends Component {
           <ExamplePolygon
             examplePolygonCoords={this.state.examplePolygonCoords}
           />
+          <UserLocationMarker
+            userLocationCoords={this.state.userLocationCoords}
+          />
+
+          <GeolocatedMe
+            getGeolocation={this.getGeolocation}
+          />
+          <NiceModal
+            onAddPlan={this.onAddPlan}
+          />
+
+          <IconLabelButtons
+            onAddListenerMarkerBtn={this.onAddListenerMarkerBtn}
+            onAddListenerPolygonBtn={this.onAddListenerPolygonBtn}
+            onAddListenerPolylineBtn={this.onAddListenerPolylineBtn}
+            onAddListenerGrabBtn={this.onAddListenerGrabBtn}
+          />
         </MapClass>
-        <AddBtn
-          onAddPlan={this.onAddPlan}
-        />
-        <DrawOptionsPanel
-          status={this.state.status}
-          onAddListenerMarkerBtn={this.onAddListenerMarkerBtn}
-          onAddListenerPolygonBtn={this.onAddListenerPolygonBtn}
-          onAddListenerPolylineBtn={this.onAddListenerPolylineBtn}
-          onAddListenerGrabBtn={this.onAddListenerGrabBtn}
-        />
       </div>
     );
   }

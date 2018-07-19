@@ -5,23 +5,35 @@ class UserLocationMarker extends Component {
         super(props);
         this.state = {}
         this.userLocationMarker = false
-
-        this.userLocationMarker = this.userLocationMarker.bind(this)
+        this.RedrawUserLocationMarker = this.RedrawUserLocationMarker.bind(this)
         //this. = this..bind(this)
     }
-    userLocationMarker() {
+    RedrawUserLocationMarker() {
         var self = this
-        if (this.props.isDrawing === 'marker' && this.props.overlayDrawingCoords.length > 0) {
+        var userLocationCoords = this.props.userLocationCoords
+        if (this.userLocationMarker === false) {
             this.userLocationMarker = new window.google.maps.Marker({
-                position: this.props.overlayDrawingCoords[0],
                 map: window.map,
+                animation: window.google.maps.Animation.BOUNCE
             })
-            console.log(this.marker)
+            window.google.maps.event.addListener(this.userLocationMarker, 'click', function () {
+                self.userLocationMarker.setOptions({
+                    visible: false
+                })
+            })
+        } else {
+            if (userLocationCoords.length > 0) {
+                this.userLocationMarker.setOptions({
+                    position: userLocationCoords[0],
+                    visible: true,
+                    animation: window.google.maps.Animation.BOUNCE,
+                })
+            }
         }
     }
 
     render() {
-        this.userLocationMarker()
+        this.RedrawUserLocationMarker()
         return (null);
     }
 }

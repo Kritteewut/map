@@ -9,6 +9,9 @@ class ExampleLine extends Component {
         this.redrawExampleLine = this.redrawExampleLine.bind(this)
         //this. = this..bind(this)
     }
+    componentWillUnmount() {
+        this.exampleLine.setMap(null)
+    }
     redrawExampleLine() {
         var exampleLineCoords = this.props.exampleLineCoords
         if (this.exampleLine === false) {
@@ -19,13 +22,13 @@ class ExampleLine extends Component {
                 strokeOpacity: 0.5,
                 overlayType: 'exampleLine',
             })
-            
+
         }
         else {
             this.exampleLine.setOptions({
                 path: exampleLineCoords,
             })
-            //this.props.onPolylineLengthCompute(this.exampleLine)
+            //onSquereMetersTrans(this.polygon)
         }
     }
     render() {
