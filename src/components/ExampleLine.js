@@ -4,31 +4,27 @@ class ExampleLine extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            exampleLineObject: []
-        }
+        this.state = {}
         this.exampleLine = false
-
         this.redrawExampleLine = this.redrawExampleLine.bind(this)
-
         //this. = this..bind(this)
     }
     redrawExampleLine() {
-        var overlayDrawingCoords = this.props.overlayDrawingCoords
+        var exampleLineCoords = this.props.exampleLineCoords
         if (this.exampleLine === false) {
             this.exampleLine = new window.google.maps.Polyline({
-                path: overlayDrawingCoords,
+                path: exampleLineCoords,
                 map: window.map,
                 clickable: false,
                 strokeOpacity: 0.5,
+                overlayType: 'exampleLine',
             })
-            //console.log(this.exampleLine)
-            //this.props.onAddExampleLineListener(this.exampleLine)
         }
         else {
             this.exampleLine.setOptions({
-                path: overlayDrawingCoords
+                path: exampleLineCoords,
             })
+            //this.props.onPolylineLengthCompute(this.exampleLine)
         }
     }
     render() {

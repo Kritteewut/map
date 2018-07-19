@@ -13,13 +13,16 @@ class Marker extends Component {
         //this. = this..bind(this)
     }
     redrawMarker() {
-        var self = this
-        if (this.props.isDrawing === 'marker' && this.props.overlayDrawingCoords.length > 0) {
+        var overlayCoords = this.props.overlayCoords
+        var overlayIndex = this.props.overlayIndex
+        var overlayDrawType = this.props.overlayDrawType
+        if (this.marker === false) {
             this.marker = new window.google.maps.Marker({
-                position: this.props.overlayDrawingCoords[0],
-                overlayIndex: this.props.overlayIndex,
+                position: overlayCoords[0],
+                overlayIndex: overlayIndex,
                 map: window.map,
-                overlayType: 'marker'
+                overlayType: 'marker',
+                overlayDrawType: overlayDrawType
             })
             this.props.addMarkerListener(this.marker)
         }

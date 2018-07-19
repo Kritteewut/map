@@ -72,6 +72,7 @@ class SearchBox extends Component {
       });
       window.map.fitBounds(this.bounds);
     });
+    
   }
 
   render() {

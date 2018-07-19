@@ -12,24 +12,28 @@ class Polyline extends Component {
         //this. = this..bind(this)
     }
     redrawPolyline() {
-        var overlayDrawingCoords = this.props.overlayDrawingCoords
+        var overlayCoords = this.props.overlayCoords
         var overlayIndex = this.props.overlayIndex
-        if (this.props.isDrawing === 'polyline') {
-            this.isRender = true
+        var overlayDrawType = this.props.overlayDrawType
+        if (this.polyline === false) {
             this.polyline = new window.google.maps.Polyline({
-                path: overlayDrawingCoords,
+                path: overlayCoords,
                 map: window.map,
                 overlayIndex: overlayIndex,
                 overlayType: 'polyline',
                 suppressUndo: true,
+                overlayDrawType: overlayDrawType
+
             })
-            this.props.addPolylineListener(this.polyline)
+            //this.props.addPolylineListener(this.polyline)
+            //this.props.onPolylineLengthCompute(this.polyline)
         }
         else {
-            if (this.props.overlayDrawingCoords.length > 0) {
+            if (overlayCoords.length > 0) {
                 this.polyline.setOptions({
-                    path: overlayDrawingCoords,
+                    path: overlayCoords,
                 })
+                //this.props.onPolylineLengthCompute(this.polyline)
             }
         }
     }

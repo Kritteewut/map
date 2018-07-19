@@ -11,6 +11,7 @@ class MapClass extends Component {
             isLoad: false,
             zoom: 15,
             center: { lat: 13, lng: 100 },
+            testState: '',
         }
     }
     componentWillMount() {
@@ -42,7 +43,10 @@ class MapClass extends Component {
         this.setState({
             isLoad: true
         })
-   
+        window.google.maps.event.addListener(window.map, 'click', function () {
+        })
+        
+
     }
 
     render() {
