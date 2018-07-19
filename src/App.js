@@ -52,6 +52,7 @@ class App extends Component {
     this.addPolylineListener = this.addPolylineListener.bind(this)
     this.onPolylineLengthCompute = this.onPolylineLengthCompute.bind(this)
     this.onSquereMetersTrans = this.onSquereMetersTrans.bind(this)
+    this.onAddPlan = this.onAddPlan.bind(this)
 
   }
 
@@ -196,6 +197,7 @@ class App extends Component {
         )
         self.onDrawExampleLine(event)
       }
+
     })
   }
   drawPolygon() {
@@ -231,26 +233,16 @@ class App extends Component {
     this.onResetSelectedOverlay(overlay)
     if (overlay.overlayType === 'polygon' || overlay.overlayType === 'polyline') {
       overlay.setOptions({
-        editable: true
+        editable: true,
       })
     }
     if (overlay.overlayType === 'marker') {
       overlay.setOptions({
-        draggble: true
+        draggable: true
       })
     }
   }
-  onResetSelectedOverlay(overlay) {
-    if (overlay.overlayType === 'polygon' || overlay.overlayType === 'polyline') {
-      overlay.setOptions({
-        editable: false
-      })
-    }
-    if (overlay.overlayType === 'marker') {
-      overlay.setOptions({
-        draggble: false
-      })
-    }
+  onResetSelectedOverlay() {
   }
   addMarkerListener(marker) {
     var self = this
@@ -259,12 +251,14 @@ class App extends Component {
     })
   }
   addPolygonListener(polygon) {
+
     var self = this
     window.google.maps.event.addListener(polygon, 'mouseup', function (event) {
       self.onSetSelectOverlay(polygon)
       if (event.vertex !== undefined || event.edge !== undefined) {
         self.onPolyCoordsEdit(polygon)
       }
+
     })
   }
   addPolylineListener(polyline) {
@@ -283,7 +277,6 @@ class App extends Component {
       let mousemoveLng = event.latLng.lng()
       let clickLat = clickEvent.latLng.lat()
       let clickLng = clickEvent.latLng.lng()
-
       self.setState({
         exampleLineCoords: [{ lat: clickLat, lng: clickLng }, { lat: mousemoveLat, lng: mousemoveLng }]
       })
@@ -310,8 +303,10 @@ class App extends Component {
   onPolyCoordsEdit(poly) {
     let overlayCoords = this.state.overlayCoords
     let polyIndex = poly.overlayIndex
-    let overlayIndex = this.state.overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
+    let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
+
     let editCoords = []
+
     poly.getPath().b.forEach(element => {
       let lat = element.lat()
       let lng = element.lng()
@@ -320,8 +315,9 @@ class App extends Component {
     this.setState(
       overlayCoords[overlayIndex].coords = editCoords
     )
-    console.log(this.state.overlayCoords)
+    console.log(this.state.overlayCoords,'ediited coords')
   }
+
   onSetDrawingCursor() {
     window.map.setOptions({
       draggableCursor: 'crosshair'
@@ -361,6 +357,12 @@ class App extends Component {
     else { rnwString = '0 ตารางวา' }
 
     return console.log('พื้นที่คือ ', rnwString)
+  }
+  onAddPlan() {
+    // var overlayCoords = this.state.overlayCoords
+    this.setState({
+      overlayCoords: []
+    })
   }
   //rederrr
   render() {
@@ -414,7 +416,6 @@ class App extends Component {
             }
             return null;
           })
-
           }
           <SearchBox
             status={this.state.status}
@@ -426,9 +427,10 @@ class App extends Component {
           <ExamplePolygon
             examplePolygonCoords={this.state.examplePolygonCoords}
           />
-
         </MapClass>
-        <AddBtn />
+        <AddBtn
+          onAddPlan={this.onAddPlan}
+        />
         <DrawOptionsPanel
           status={this.state.status}
           onAddListenerMarkerBtn={this.onAddListenerMarkerBtn}

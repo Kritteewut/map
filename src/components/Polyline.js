@@ -11,6 +11,11 @@ class Polyline extends Component {
 
         //this. = this..bind(this)
     }
+    componentWillUnmount() {
+        if (this.polyline !== false) {
+            this.polyline.setMap(null)
+        }
+    }
     redrawPolyline() {
         var overlayCoords = this.props.overlayCoords
         var overlayIndex = this.props.overlayIndex
@@ -25,7 +30,7 @@ class Polyline extends Component {
                 overlayDrawType: overlayDrawType
 
             })
-            //this.props.addPolylineListener(this.polyline)
+            this.props.addPolylineListener(this.polyline)
             //this.props.onPolylineLengthCompute(this.polyline)
         }
         else {

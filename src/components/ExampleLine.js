@@ -19,6 +19,7 @@ class ExampleLine extends Component {
                 strokeOpacity: 0.5,
                 overlayType: 'exampleLine',
             })
+            
         }
         else {
             this.exampleLine.setOptions({

@@ -18,16 +18,14 @@ const styles = theme => ({
     boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
   },
 });
-function onClickHandlerAddplan() {
-  
-}
+
 function AddBtn(props) {
   const { classes } = props;
   return (
     <div>
       <Tooltip title="Add Plan" placement="bottom">
         <Button variant="fab" className={classes.absolute}
-          onClick={() => onClickHandlerAddplan()}
+          onClick={() => props.onAddPlan()}
         >
           <AddIcon />
         </Button>

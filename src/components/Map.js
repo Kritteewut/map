@@ -43,10 +43,8 @@ class MapClass extends Component {
         this.setState({
             isLoad: true
         })
-        window.google.maps.event.addListener(window.map, 'click', function () {
+        window.google.maps.event.addListener(window.map, 'click', function (event) {
         })
-        
-
     }
 
     render() {

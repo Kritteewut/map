@@ -9,11 +9,17 @@ class Polygon extends Component {
         this.redrawPolygon = this.redrawPolygon.bind(this)
         //this. = this..bind(this)
     }
+    componentWillUnmount() {
+        if (this.polygon !== false) {
+            this.polygon.setMap(null)
+        }
+    }
     redrawPolygon() {
         var onSquereMetersTrans = this.props.onSquereMetersTrans
         var overlayCoords = this.props.overlayCoords
         var overlayIndex = this.props.overlayIndex
         var overlayDrawType = this.props.overlayDrawType
+
         if (this.polygon === false) {
             this.polygon = new window.google.maps.Polygon({
                 path: overlayCoords,

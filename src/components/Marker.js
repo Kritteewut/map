@@ -12,6 +12,11 @@ class Marker extends Component {
         this.redrawMarker = this.redrawMarker.bind(this)
         //this. = this..bind(this)
     }
+    componentWillUnmount() {
+        if (this.marker !== false) {
+            this.marker.setMap(null)
+        }
+    }
     redrawMarker() {
         var overlayCoords = this.props.overlayCoords
         var overlayIndex = this.props.overlayIndex
