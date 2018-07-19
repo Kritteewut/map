@@ -13,6 +13,7 @@ import GeolocatedMe from './components/Geolocation'
 import IconLabelButtons from './components/DrawingBtn'
 import { Button } from '../node_modules/@material-ui/core';
 import UserLocationMarker from './components/UserLocationMarker';
+import Sidebar from './components/Sidebar';
 
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
@@ -519,6 +520,7 @@ class App extends Component {
             onAddListenerPolylineBtn={this.onAddListenerPolylineBtn}
             onAddListenerGrabBtn={this.onAddListenerGrabBtn}
           />
+          <Sidebar />
         </MapClass>
       </div>
     );
