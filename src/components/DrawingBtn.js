@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -15,15 +14,11 @@ const styles = theme => ({
         position: 'absolute',
         bottom: theme.spacing.unit * 59,
         right: theme.spacing.unit,
-
-
     },
     buttonPoint: {
         position: 'absolute',
         bottom: theme.spacing.unit * 51,
         right: theme.spacing.unit,
-
-
     },
     buttonLine: {
         position: 'absolute',
@@ -36,15 +31,11 @@ const styles = theme => ({
         position: 'absolute',
         bottom: theme.spacing.unit * 37,
         right: theme.spacing.unit,
-
-
     },
     buttonMarker: {
         position: 'absolute',
         bottom: theme.spacing.unit * 30,
         right: theme.spacing.unit,
-
-
     },
     leftIcon: {
         marginRight: theme.spacing.unit,
@@ -86,7 +77,8 @@ function IconLabelButtons(props) {
                 <KeyboardVoiceICon className={classes.leftIcon} />
                 Polygon
       </Button>
-            <Button variant="contained" className={classes.buttonMarker}>
+            <Button variant="contained" className={classes.buttonMarker}
+                onClick={() => props.onSaveToFirestore()}>
                 <Place className={classes.leftIcon} />
                 Marker
       </Button>

@@ -5,14 +5,15 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 const styles = {
     list: {
         width: '35vw',
     },
-    // fullList: {
-    //   width: 'auto',
-    // },
+    fullList: {
+        width: 'auto',
+    },
 };
 
 class Sidebar extends Component {
@@ -34,27 +35,32 @@ class Sidebar extends Component {
 
         const sideList = (
             <div className={classes.list}>
-                <List></List>
+                <List>
+                    User info
+                </List>
                 <Divider />
-                <List></List>
+                {this.props.planData.map(value => {
+                    return (
+                        <ListItem
+                            button
+                            key={value.planId}
+                            onClick={() => this.props.onSelectCurrentPlanData(value)}>
+                            <ListItemText primary={value.planName} >
+                            </ListItemText>
+                        </ListItem>
+                    )
+                })}
             </div>
         );
-
-        // const fullList = (
-        //   <div className={classes.fullList}>
-        //     <List></List>
-        //     <Divider />
-        //     <List></List>
-        //   </div>
-        // );
-
         return (
             <div>
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.toggleDrawer('left', true)} style={{ margin: '100px 0px 0px 10px' }} >Open Left</Button>
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.toggleDrawer('left', true)} style={{ margin: '100px 0px 0px 10px' }} >Plan: {this.props.currentPlanData.planName}</Button>
                 <SwipeableDrawer
-                    open={this.state.left}
+                    open={true}
+                    shadow={false}
                     onClose={this.toggleDrawer('left', false)}
                     onOpen={this.toggleDrawer('left', true)}
+
                 >
                     <div
                         tabIndex={0}
