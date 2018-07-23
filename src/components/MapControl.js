@@ -15,4 +15,3 @@ export default class MapControl extends Component {
     return createPortal(this.props.children, this.controlDiv)
   }
 }
-

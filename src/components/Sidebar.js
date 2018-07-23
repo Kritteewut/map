@@ -5,10 +5,11 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+import Login from './Login';
 
 const styles = {
     list: {
-        width: '35vw',
+        width: '27vw',
     },
     // fullList: {
     //   width: 'auto',
@@ -34,9 +35,7 @@ class Sidebar extends Component {
 
         const sideList = (
             <div className={classes.list}>
-                <List></List>
-                <Divider />
-                <List></List>
+                <Login/>
             </div>
         );
 
@@ -52,9 +51,9 @@ class Sidebar extends Component {
             <div>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.toggleDrawer('left', true)} style={{ margin: '100px 0px 0px 10px' }} >Open Left</Button>
                 <SwipeableDrawer
-                    open={this.state.left}
-                    onClose={this.toggleDrawer('left', false)}
-                    onOpen={this.toggleDrawer('left', true)}
+                    open='left'
+                    // onClose={this.toggleDrawer('left', false)}
+                    // onOpen={this.toggleDrawer('left', true)}
                 >
                     <div
                         tabIndex={0}

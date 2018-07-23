@@ -15,7 +15,7 @@ class Polygon extends Component {
         }
     }
     redrawPolygon() {
-        var onSquereMetersTrans = this.props.onSquereMetersTrans
+        //var onSquereMetersTrans = this.props.onSquereMetersTrans
         var overlayCoords = this.props.overlayCoords
         var overlayIndex = this.props.overlayIndex
         var overlayDrawType = this.props.overlayDrawType
@@ -27,7 +27,6 @@ class Polygon extends Component {
                 overlayIndex: overlayIndex,
                 overlayType: 'polygon',
                 suppressUndo: true,
-                //clickable: false,
                 overlayDrawType: overlayDrawType
             })
             this.props.addPolygonListener(this.polygon)

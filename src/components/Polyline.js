@@ -6,9 +6,7 @@ class Polyline extends Component {
         super(props);
         this.state = {}
         this.polyline = false
-
         this.redrawPolyline = this.redrawPolyline.bind(this)
-
         //this. = this..bind(this)
     }
     componentWillUnmount() {

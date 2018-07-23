@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import zIndex from '../../node_modules/@material-ui/core/styles/zIndex';
 
 class MapClass extends Component {
     constructor(props) {
@@ -9,8 +8,8 @@ class MapClass extends Component {
         //this.deleteme = this.deleteme.bind(this)
         this.state = {
             isLoad: false,
-            zoom: 15,
-            center: { lat: 13, lng: 100 },
+            zoom: 5,
+            center: { lat: 13.0003076, lng: 96.992706 },
         }
     }
     componentDidMount() {
@@ -41,12 +40,11 @@ class MapClass extends Component {
                 style={{
                     position: 'absolute',
                     top: 0,
-                    left: 0,
+                    left: '25vw',
                     right: 0,
                     bottom: 0,
                     justifyContent: 'flex-end',
                     alignItems: 'center',
-                    zIndex: -1,
                 }}
                 id="map">
                 {childrenOutput}

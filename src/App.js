@@ -4,16 +4,15 @@ import Marker from './components/Marker';
 import Polygon from './components/Polygon';
 import Polyline from './components/Polyline';
 import SearchBox from './components/searchBox';
-import AddBtn from './components/AddBtn'
 import ExampleLine from './components/ExampleLine';
 import ExamplePolygon from './components/ExamplePolygon';
-import { db } from './config/firebase'
-import NiceModal from './components/Modal'
-import GeolocatedMe from './components/Geolocation'
-import IconLabelButtons from './components/DrawingBtn'
-import { Button } from '../node_modules/@material-ui/core';
+import { db } from './config/firebase';
+import NiceModal from './components/Modal';
+import GeolocatedMe from './components/Geolocation';
+import IconLabelButtons from './components/DrawingBtn';
 import UserLocationMarker from './components/UserLocationMarker';
-import Sidebar from './components/Sidebar';
+import PermanentDrawer from './components/Navigation';
+import Login from './components/Login';
 
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
@@ -37,7 +36,15 @@ var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=g
 var my_script2 = new_script('https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.0.2/jsts.min.js')
 
 class App extends Component {
-
+  static async getInitialProps(props) {
+    return console.log('get init!',props)
+    // auth.onAuthStateChanged((user) => {
+    //     if (user) {
+    //         this.setState({ user });
+    //         console.log(user)
+    //     }
+    // });
+  }
   constructor(props) {
     super(props)
     this.state = {
@@ -52,6 +59,10 @@ class App extends Component {
       examplePolygonCoords: [],
       userLocationCoords: [],
       polylineLength: 0,
+      planData: [],
+      currentPlanData: [],
+      selectedColor: '',
+      user: null
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
@@ -64,9 +75,14 @@ class App extends Component {
     this.onSquereMetersTrans = this.onSquereMetersTrans.bind(this)
     this.onAddPlan = this.onAddPlan.bind(this)
     this.getGeolocation = this.getGeolocation.bind(this)
-
+    this.onSelectCurrentPlanData = this.onSelectCurrentPlanData.bind(this)
+    this.onSaveToFirestore = this.onSaveToFirestore.bind(this)
+    this.onSetSelectedColor = this.onSetSelectedColor.bind(this)
+    this.onSetUser = this.onSetUser.bind(this)
   }
-
+  componentDidMount() {
+    this.onQueryPlanFromFirestore()
+  }
   do_load = () => {
     var self = this;
 
@@ -155,10 +171,11 @@ class App extends Component {
       let overlayIndex = self.state.overlayIndex
       let isFirstDraw = self.state.isFirstDraw
       let overlayCoords = self.state.overlayCoords
+      let planId = self.state.currentPlanData.planId
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
       if (isFirstDraw === true) {
-        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'marker', overlayDrawType: 'draw' })
+        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'marker', overlayDrawType: 'draw', planId })
       }
       self.setState({
         overlayCoords: overlayCoords,
@@ -177,7 +194,8 @@ class App extends Component {
       if (self.state.isFirstDraw === true) {
         let overlayIndex = self.state.overlayIndex
         let overlayCoords = self.state.overlayCoords
-        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'polyline', overlayDrawType: 'draw' })
+        let planId = self.state.currentPlanData.planId
+        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'polyline', overlayDrawType: 'draw', planId })
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
@@ -201,10 +219,11 @@ class App extends Component {
     window.google.maps.event.addListener(window.map, 'click', function (event) {
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
+      let planId = self.state.currentPlanData.planId
       if (self.state.isFirstDraw === true) {
         let overlayIndex = self.state.overlayIndex
         let overlayCoords = self.state.overlayCoords
-        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'polygon', overlayDrawType: 'draw' })
+        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'polygon', overlayDrawType: 'draw', planId })
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
@@ -231,12 +250,16 @@ class App extends Component {
       overlay.setOptions({
         editable: true,
       })
+      this.setState({
+        selectedOverlay: overlay
+      })
     }
     if (overlay.overlayType === 'marker') {
       overlay.setOptions({
         draggable: true
       })
     }
+
   }
   onResetSelectedOverlay() {
   }
@@ -247,20 +270,22 @@ class App extends Component {
     })
   }
   addPolygonListener(polygon) {
-
     var self = this
-    window.google.maps.event.addListener(polygon, 'mouseup', function (event) {
+    window.google.maps.event.addListener(polygon, 'click', function () {
       self.onSetSelectOverlay(polygon)
+    })
+    window.google.maps.event.addListener(polygon, 'mouseup', function (event) {
       if (event.vertex !== undefined || event.edge !== undefined) {
         self.onPolyCoordsEdit(polygon)
       }
-
     })
   }
   addPolylineListener(polyline) {
     var self = this
-    window.google.maps.event.addListener(polyline, 'mouseup', function (event) {
+    window.google.maps.event.addListener(polyline, 'click', function () {
       self.onSetSelectOverlay(polyline)
+    })
+    window.google.maps.event.addListener(polyline, 'mouseup', function (event) {
       if (event.vertex !== undefined || event.edge !== undefined) {
         self.onPolyCoordsEdit(polyline)
       }
@@ -278,32 +303,25 @@ class App extends Component {
       })
     })
   }
-  onDrawExamplePolygon(coords) {
-    var self = this
-    let tempCoords = coords
-    window.google.maps.event.addListener(window.map, 'mousemove', function (event) {
-      let mousemoveLat = event.latLng.lat()
-      let mousemoveLng = event.latLng.lng()
-
-      let length = coords.length
-      tempCoords[length] = { lat: mousemoveLat, lng: mousemoveLng }
-
-      console.log(tempCoords, 'exam')
-
-      // self.setState({
-      //   examplePolygonCoords: coords
-      // })
-
-    })
+  onDrawExamplePolygon() {
+    // window.google.maps.event.addListener(window.map, 'mousemove', function (event) {
+    //   let mousemoveLat = event.latLng.lat()
+    //   let mousemoveLng = event.latLng.lng()
+    //   let length = coords.length
+    //   tempCoords[length] = { lat: mousemoveLat, lng: mousemoveLng }
+    //   console.log(tempCoords, 'exam')
+    // self.setState({
+    //   examplePolygonCoords: coords
+    // })
+    //})
   }
-  onPolyCoordsEdit(poly) {
+  onPolyCoordsEdit(polygon) {
+
     let overlayCoords = this.state.overlayCoords
-    let polyIndex = poly.overlayIndex
+    let polyIndex = polygon.overlayIndex
     let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
-
     let editCoords = []
-
-    poly.getPath().b.forEach(element => {
+    polygon.getPath().b.forEach(element => {
       let lat = element.lat()
       let lng = element.lng()
       editCoords.push({ lat, lng })
@@ -311,7 +329,7 @@ class App extends Component {
     this.setState(
       overlayCoords[overlayIndex].coords = editCoords
     )
-    console.log(this.state.overlayCoords, 'ediited coords')
+    console.log(this.state.overlayCoords[overlayIndex], 'ediited coords')
   }
 
   onSetDrawingCursor() {
@@ -359,63 +377,67 @@ class App extends Component {
     let overlayCoords = this.state.overlayCoords
     overlayCoords.map(value => {
       // add coords array to cloud firestore
-      shapesRef.add({
-        // add data here
-        coords: value.coords,
-        overlayType: value.overlayType,
-        //planId: value['planId'],
-        //overlayOptions: value['overlayOptions'],
-      }).then(
-        console.log('notice me senpai!')
-      )
+      if (value.overlayDrawType === 'draw') {
+        shapesRef.add({
+          // add data here
+          coords: value.coords,
+          overlayType: value.overlayType,
+          planId: value.planId,
+          //overlayOptions: value['overlayOptions'],
+        }).then(
+          console.log('notice me senpai!'))
+      } else {
+        shapesRef.doc(value.overlayIndex).set({
+          coords: value.coords,
+        }, { merge: true });
+      }
       return null;
     })
-    self.setState({
-      overlayCoords: []
-    }, () => self.onOverlayRedraw())
+    self.onOverlayRedraw()
   }
   onOverlayRedraw() {
     let self = this
-    let overlayCoords = this.state.overlayCoords
-
-    shapesRef.get().then(function (querySnapshot) {
+    let planId = self.state.currentPlanData.planId
+    this.setState({
+      overlayCoords: []
+    })
+    shapesRef.where('planId', '==', planId).get().then(function (querySnapshot) {
+      let overlayCoords = self.state.overlayCoords
       querySnapshot.forEach(function (doc) {
-
         let coords = doc.data().coords
         let overlayIndex = doc.id
         let overlayType = doc.data().overlayType
-
         overlayCoords.push({
           coords: coords,
           overlayIndex: overlayIndex,
           overlayType: overlayType,
-          overlayDrawType: 'redraw'
+          overlayDrawType: 'redraw',
+          planId,
         })
       })
       self.setState({
         overlayCoords: overlayCoords
       })
-    })
-  }
-  onAddPlan(planName) {
-    planRef.add({
-      planName
+      self.onFitBounds(overlayCoords)
     })
 
+  }
+  onAddPlan(planName) {
+    var self = this
+    var uid = this.state.user.uid
+
+    planRef.add({
+      planName,
+      uid
+    })
     planRef.onSnapshot(function (snapshot) {
       snapshot.docChanges().forEach(function (change) {
         if (change.type === "added") {
-          console.log("New city: ", change.doc.data(), change.doc.id);
-        }
-        if (change.type === "modified") {
-          console.log("Modified city: ", change.doc.data());
-        }
-        if (change.type === "removed") {
-          console.log("Removed city: ", change.doc.data());
+          //console.log(change.doc.data())
+          self.onQueryPlanFromFirestore()
         }
       });
     });
-
   }
   getGeolocation() {
     navigator.geolocation.getCurrentPosition(position => {
@@ -428,6 +450,66 @@ class App extends Component {
       })
     })
   }
+  onQueryPlanFromFirestore() {
+    // get all plan list from frirestore filter by user ID
+    this.setState({
+      planData: []
+    })
+    let planData = this.state.planData
+    var self = this
+
+    planRef.get().then(function (querySnapshot) {
+      querySnapshot.forEach(function (doc) {
+        planData.push({
+          planName: doc.data().planName,
+          planId: doc.id,
+        })
+      })
+      self.setState({
+        planData: planData
+      })
+    })
+
+  }
+  onSelectCurrentPlanData(planData) {
+    var self = this
+    this.setState({
+      currentPlanData: planData
+    }, () => self.onOverlayRedraw())
+    console.log(this.state.currentPlanData)
+  }
+
+  onFitBounds(overlayCoords) {
+    if (overlayCoords.length > 0) {
+      const bounds = new window.google.maps.LatLngBounds();
+      overlayCoords.forEach(value => {
+        value.coords.forEach(value2 => {
+          bounds.extend(new window.google.maps.LatLng(value2))
+        })
+      })
+      window.map.fitBounds(bounds)
+    }
+  }
+  onSetSelectedColor(color) {
+    this.setState({
+      selectedColor: color
+    })
+
+  }
+  onChangePolyColor() {
+    let selectedOverlay = this.state.selectedOverlay
+    let selectedColor = this.state.selectedColor
+    selectedOverlay.setOptions({
+      fillColor: selectedColor
+    })
+  }
+
+  onSetUser(user) {
+    this.setState({
+      user: user
+    }, () => console.log(this.state.user.uid))
+  }
+
   render() {
     var self = this;
     if (self.state.status === 'start') {
@@ -447,7 +529,6 @@ class App extends Component {
           bottom: 0,
           justifyContent: 'flex-end',
           alignItems: 'center',
-          zIndex: -1,
         }}
       >
         <MapClass>
@@ -519,9 +600,23 @@ class App extends Component {
             onAddListenerPolygonBtn={this.onAddListenerPolygonBtn}
             onAddListenerPolylineBtn={this.onAddListenerPolylineBtn}
             onAddListenerGrabBtn={this.onAddListenerGrabBtn}
+            onSaveToFirestore={this.onSaveToFirestore}
           />
-          <Sidebar />
         </MapClass>
+        {/* <PermanentDrawer
+          planData={this.state.planData}
+          currentPlanData={this.state.currentPlanData}
+          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
+          onSetSelectedColor={this.onSetSelectedColor}
+        /> */}
+        <Login
+          planData={this.state.planData}
+          currentPlanData={this.state.currentPlanData}
+          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
+          onSetSelectedColor={this.onSetSelectedColor}
+          onSetUser={this.onSetUser}
+
+        />
       </div>
     );
   }

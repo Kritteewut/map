@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import icon_point from './icons/icon_point.png'
 
 class Marker extends Component {
     constructor(props) {
@@ -27,7 +28,8 @@ class Marker extends Component {
                 overlayIndex: overlayIndex,
                 map: window.map,
                 overlayType: 'marker',
-                overlayDrawType: overlayDrawType
+                overlayDrawType: overlayDrawType,
+                icon: icon_point,
             })
             this.props.addMarkerListener(this.marker)
         }
