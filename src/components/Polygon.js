@@ -16,9 +16,13 @@ class Polygon extends Component {
     }
     redrawPolygon() {
         //var onSquereMetersTrans = this.props.onSquereMetersTrans
-        var overlayCoords = this.props.overlayCoords
-        var overlayIndex = this.props.overlayIndex
-        var overlayDrawType = this.props.overlayDrawType
+        var {
+            overlayCoords,
+            overlayIndex,
+            overlayDrawType,
+            fillColor,
+            strokeColor,
+        } = this.props
 
         if (this.polygon === false) {
             this.polygon = new window.google.maps.Polygon({
@@ -27,9 +31,12 @@ class Polygon extends Component {
                 overlayIndex: overlayIndex,
                 overlayType: 'polygon',
                 suppressUndo: true,
-                overlayDrawType: overlayDrawType
+                overlayDrawType: overlayDrawType,
+                strokeColor: strokeColor,
+                fillColor: fillColor,
             })
             this.props.addPolygonListener(this.polygon)
+            console.log(this.polygon)
         }
         else {
             if (overlayCoords.length > 0) {

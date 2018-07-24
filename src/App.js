@@ -13,7 +13,7 @@ import UserLocationMarker from './components/UserLocationMarker';
 import PermanentDrawer from './components/Navigation'
 import Login from './components/Login';
 import { db } from './config/firebase'
-import './App.css';
+import OverlayOptions from './components/OverlayOptions';
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
 
@@ -51,10 +51,9 @@ class App extends Component {
     this.state = {
       status: 'start',
       btnTypeCheck: '',
-      overlayObject: [],
       overlayCoords: [],
       overlayIndex: 0,
-      selectedOverlay: [],
+      selectedOverlay: null,
       isFirstDraw: true,
       exampleLineCoords: [],
       examplePolygonCoords: [],
@@ -62,6 +61,9 @@ class App extends Component {
       polylineLength: 0,
       planData: [],
       currentPlanData: [],
+      fillColor: '#FFA500',
+      strokeColor: '#FF4500',
+      user: null,
       selectedColor: '',
       user: null,
       currentDate: new Date(),
@@ -79,9 +81,10 @@ class App extends Component {
     this.getGeolocation = this.getGeolocation.bind(this)
     this.onSelectCurrentPlanData = this.onSelectCurrentPlanData.bind(this)
     this.onSaveToFirestore = this.onSaveToFirestore.bind(this)
-    this.onSetSelectedColor = this.onSetSelectedColor.bind(this)
     this.onSetUser = this.onSetUser.bind(this)
-    // this.onSetDate = this.onSetDate.bind(this)
+    this.onChangePolyStrokeColor = this.onChangePolyStrokeColor.bind(this)
+    this.onChangePolyFillColor = this.onChangePolyFillColor.bind(this)
+
   }
   componentDidMount() {
     this.onQueryPlanFromFirestore()
@@ -117,8 +120,16 @@ class App extends Component {
     window.google.maps.event.clearListeners(window.map, 'mousemove')
   }
   onUtilitiesMethod() {
-    var isFirstDraw = this.state.isFirstDraw
+    const { isFirstDraw, overlayCoords } = this.state
     if (isFirstDraw === false) {
+      const currentOvrelay = overlayCoords[overlayCoords.length - 1]
+      const coordsLength = currentOvrelay.coords.length
+      if (currentOvrelay.overlayType === 'polygon' && coordsLength < 3) {
+        overlayCoords.splice(overlayCoords.length - 1, 1)
+      }
+      if (currentOvrelay.overlayType === 'polyline' && coordsLength < 2) {
+        overlayCoords.splice(overlayCoords.length - 1, 1)
+      }
       this.setState((prevState) => {
         return {
           overlayIndex: prevState.overlayIndex + 1,
@@ -127,61 +138,55 @@ class App extends Component {
       }, () => console.log(this.state.overlayCoords, 'overlayCoords'));
     }
     this.onExampleLineReset()
-    //this.onResetSelectedOverlay()
+    this.onResetSelectedOverlay()
   }
   onAddListenerMarkerBtn() {
+    this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('marker'))) {
-      this.onUtilitiesMethod()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawMarker()
     }
   }
   onAddListenerPolygonBtn() {
+    this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polygon'))) {
-      this.onUtilitiesMethod()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolygon()
     }
   }
   onAddListenerPolylineBtn() {
+    this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polyline'))) {
-      this.onUtilitiesMethod()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolyline()
     }
   }
   onAddListenerGrabBtn() {
-    this.onUtilitiesMethod()
     this.onClearSomeMapEventListener()
+    this.onUtilitiesMethod()
     this.onSetDragMapCursor()
     this.setState({
       btnTypeCheck: ''
     })
   }
-  onAddOverlayObject(overlay) {
-    var temp = this.state.overlayObject
-    temp.push(overlay)
-    this.setState({
-      overlayObject: temp
-    }, () => console.log(this.state.overlayObject, 'overlay object'))
-  }
   drawMarker() {
     var self = this
     window.google.maps.event.addListener(window.map, 'click', function (event) {
-      let overlayIndex = self.state.overlayIndex
-      let isFirstDraw = self.state.isFirstDraw
-      let overlayCoords = self.state.overlayCoords
-      let planId = self.state.currentPlanData.planId
+      let { overlayIndex, isFirstDraw, overlayCoords } = self.state
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
       if (isFirstDraw === true) {
-        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'marker', overlayDrawType: 'draw', planId })
+        overlayCoords.push({
+          coords: [{ lat, lng }],
+          overlayIndex, overlayType: 'marker',
+          overlayDrawType: 'draw'
+        })
       }
       self.setState({
-        overlayCoords: overlayCoords,
+        overlayCoords,
         btnTypeCheck: '',
         isFirstDraw: false,
       }, () => {
@@ -195,18 +200,22 @@ class App extends Component {
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
       if (self.state.isFirstDraw === true) {
-        let overlayIndex = self.state.overlayIndex
-        let overlayCoords = self.state.overlayCoords
-        let planId = self.state.currentPlanData.planId
-        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'polyline', overlayDrawType: 'draw', planId })
+        let { overlayIndex, overlayCoords, strokeColor } = self.state
+        overlayCoords.push({
+          coords: [{ lat, lng }],
+          overlayIndex,
+          overlayType: 'polyline',
+          overlayDrawType: 'draw',
+          strokeColor: strokeColor,
+        })
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
-          overlayCoords: overlayCoords,
+          overlayCoords,
         })
         self.onDrawExampleLine(event)
       } else {
-        let overlayCoords = self.state.overlayCoords
+        let { overlayCoords } = self.state
         let coords = overlayCoords[overlayCoords.length - 1].coords
         coords.push({ lat, lng })
         self.setState(
@@ -214,7 +223,6 @@ class App extends Component {
         )
         self.onDrawExampleLine(event)
       }
-
     })
   }
   drawPolygon() {
@@ -222,11 +230,17 @@ class App extends Component {
     window.google.maps.event.addListener(window.map, 'click', function (event) {
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
-      let planId = self.state.currentPlanData.planId
+
       if (self.state.isFirstDraw === true) {
-        let overlayIndex = self.state.overlayIndex
-        let overlayCoords = self.state.overlayCoords
-        overlayCoords.push({ coords: [{ lat, lng }], overlayIndex, overlayType: 'polygon', overlayDrawType: 'draw', planId })
+        let { overlayIndex, overlayCoords, fillColor, strokeColor } = self.state
+        overlayCoords.push({
+          coords: [{ lat, lng }],
+          overlayIndex,
+          overlayType: 'polygon',
+          overlayDrawType: 'draw',
+          fillColor: fillColor,
+          strokeColor: strokeColor,
+        })
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
@@ -236,7 +250,7 @@ class App extends Component {
         //self.onDrawExamplePolygon(coords)
         self.onDrawExampleLine(event)
       } else {
-        let overlayCoords = self.state.overlayCoords
+        let { overlayCoords } = self.state
         let coords = overlayCoords[overlayCoords.length - 1].coords
         coords.push({ lat, lng })
         self.setState(
@@ -248,7 +262,7 @@ class App extends Component {
     })
   }
   onSetSelectOverlay(overlay) {
-    this.onResetSelectedOverlay(overlay)
+    this.onResetSelectedOverlay()
     if (overlay.overlayType === 'polygon' || overlay.overlayType === 'polyline') {
       overlay.setOptions({
         editable: true,
@@ -259,12 +273,33 @@ class App extends Component {
     }
     if (overlay.overlayType === 'marker') {
       overlay.setOptions({
-        draggable: true
+        draggable: true,
+      })
+      this.setState({
+        selectedOverlay: overlay
       })
     }
-
   }
   onResetSelectedOverlay() {
+    const { selectedOverlay } = this.state
+    if (selectedOverlay !== null) {
+      if (selectedOverlay.overlayType === 'polygon' || selectedOverlay.overlayType === 'polyline') {
+        selectedOverlay.setOptions({
+          editable: false,
+        })
+        this.setState({
+          selectedOverlay: null
+        })
+      }
+      if (selectedOverlay.overlayType === 'marker') {
+        selectedOverlay.setOptions({
+          draggable: false,
+        })
+        this.setState({
+          selectedOverlay: null
+        })
+      }
+    }
   }
   addMarkerListener(marker) {
     var self = this
@@ -332,6 +367,7 @@ class App extends Component {
     this.setState(
       overlayCoords[overlayIndex].coords = editCoords
     )
+
     console.log(this.state.overlayCoords[overlayIndex], 'ediited coords')
   }
 
@@ -492,38 +528,35 @@ class App extends Component {
       window.map.fitBounds(bounds)
     }
   }
-  onSetSelectedColor(color) {
+  onChangePolyStrokeColor(color) {
+    let { selectedOverlay, strokeColor } = this.state
+    if (selectedOverlay !== null) {
+      selectedOverlay.setOptions({
+        strokeColor: color
+      }, () => console.log(strokeColor))
+    }
     this.setState({
-      selectedColor: color
-    })
-
-  }
-  onChangePolyColor() {
-    let selectedOverlay = this.state.selectedOverlay
-    let selectedColor = this.state.selectedColor
-    selectedOverlay.setOptions({
-      fillColor: selectedColor
+      strokeColor: color
     })
   }
-
+  onChangePolyFillColor(color) {
+    let { selectedOverlay, fillColor } = this.state
+    if (selectedOverlay) {
+      selectedOverlay.setOptions({
+        fillColor: color
+      })
+    }
+    this.setState({
+      fillColor: color
+    }, () => console.log(fillColor))
+  }
   onSetUser(user) {
     this.setState({
       user: user
     }, () => console.log(this.state.user.uid))
   }
 
-  // onSetDate() {
-  //   var currentDate = this.state.currentDate
-  //   var day = currentDate.getDate();
-  //   var month = currentDate.getMonth();
-  //   var year = currentDate.getYear();
-
-  //   var dayString = moment(year + '-' + month + '-' + day).format('DD/MMM/YYYY');
-  //   this.setState({
-  //     currentDate: dayString
-  //   })
-  // }
-
+  //this is rederrrrr
   render() {
     var self = this;
     if (self.state.status === 'start') {
@@ -547,10 +580,11 @@ class App extends Component {
       >
         <MapClass>
           {this.state.overlayCoords.map(value => {
-            let overlayCoords = value.coords
-            let overlayIndex = value.overlayIndex
-            let overlayDrawType = value.overlayDrawType
-
+            const overlayCoords = value.coords
+            const overlayIndex = value.overlayIndex
+            const overlayDrawType = value.overlayDrawType
+            const fillColor = value.fillColor
+            const strokeColor = value.strokeColor
             if (value.overlayType === 'polygon') {
               return (
                 <Polygon
@@ -558,6 +592,8 @@ class App extends Component {
                   overlayCoords={overlayCoords}
                   overlayIndex={overlayIndex}
                   overlayDrawType={overlayDrawType}
+                  fillColor={fillColor}
+                  strokeColor={strokeColor}
                   addPolygonListener={this.addPolygonListener}
                   onSquereMetersTrans={this.onSquereMetersTrans}
                 />
@@ -570,9 +606,11 @@ class App extends Component {
                   overlayCoords={overlayCoords}
                   overlayIndex={overlayIndex}
                   overlayDrawType={overlayDrawType}
+                  strokeColor={strokeColor}
                   addPolylineListener={this.addPolylineListener}
                   onPolylineLengthCompute={this.onPolylineLengthCompute}
-                />)
+                />
+              )
             }
             if (value.overlayType === 'marker') {
               return (
@@ -584,8 +622,9 @@ class App extends Component {
                   addMarkerListener={this.addMarkerListener}
                 />
               )
+
             }
-            return null;
+            return (null)
           })
           }
           <SearchBox
@@ -594,6 +633,7 @@ class App extends Component {
           <ExampleLine
             exampleLineCoords={this.state.exampleLineCoords}
             onPolylineLengthCompute={this.onPolylineLengthCompute}
+            strokeColor={this.state.strokeColor}
           />
           <ExamplePolygon
             examplePolygonCoords={this.state.examplePolygonCoords}
@@ -616,25 +656,19 @@ class App extends Component {
             onAddListenerGrabBtn={this.onAddListenerGrabBtn}
             onSaveToFirestore={this.onSaveToFirestore}
           />
+
         </MapClass>
-        <PermanentDrawer
+        <Login
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
           onSelectCurrentPlanData={this.onSelectCurrentPlanData}
-          onSetSelectedColor={this.onSetSelectedColor}
           onSetUser={this.onSetUser}
-          user={this.state.user}
         />
-        {/* <Login
-          planData={this.state.planData}
-          currentPlanData={this.state.currentPlanData}
-          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
+        <OverlayOptions
           onSetSelectedColor={this.onSetSelectedColor}
-          onSetUser={this.onSetUser}
-        /> */}
-        {/*
-        optiosn
-        */}
+          onChangePolyStrokeColor={this.onChangePolyStrokeColor}
+          onChangePolyFillColor={this.onChangePolyFillColor}
+        />
       </div>
     );
   }

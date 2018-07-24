@@ -15,9 +15,12 @@ class Polyline extends Component {
         }
     }
     redrawPolyline() {
-        var overlayCoords = this.props.overlayCoords
-        var overlayIndex = this.props.overlayIndex
-        var overlayDrawType = this.props.overlayDrawType
+        var {
+            overlayCoords,
+            overlayIndex,
+            overlayDrawType,
+            strokeColor,
+        } = this.props
         if (this.polyline === false) {
             this.polyline = new window.google.maps.Polyline({
                 path: overlayCoords,
@@ -25,7 +28,8 @@ class Polyline extends Component {
                 overlayIndex: overlayIndex,
                 overlayType: 'polyline',
                 suppressUndo: true,
-                overlayDrawType: overlayDrawType
+                overlayDrawType: overlayDrawType,
+                strokeColor: strokeColor,
 
             })
             this.props.addPolylineListener(this.polyline)

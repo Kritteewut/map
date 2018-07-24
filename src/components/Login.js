@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import firebase, { auth, provider, provider2 } from '../config/firebase';
-
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-
 import './Login.css';
-
 import logo from './Picture/Ling logo.png'
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -13,11 +10,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Lock from '@material-ui/icons/Lock';
 import Drawer from '@material-ui/core/Drawer';
 import PermanentDrawer from './Navigation'
-
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
-
-
 
 const drawerWidth = '25vw';
 
@@ -151,7 +145,6 @@ class Login extends Component {
            ลืมรหัสผ่าน
                     </div>
                 <br /> <br />
-
             </div>
         )
     }

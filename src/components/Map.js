@@ -8,7 +8,7 @@ class MapClass extends Component {
         //this.deleteme = this.deleteme.bind(this)
         this.state = {
             isLoad: false,
-            zoom: 5,
+            zoom: 15,
             center: { lat: 13.0003076, lng: 96.992706 },
         }
     }
