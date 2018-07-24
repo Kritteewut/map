@@ -2,13 +2,7 @@ import React, { Component } from 'react';
 import firebase, { auth, provider, provider2 } from '../config/firebase';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-<<<<<<< HEAD
-import './Login.css'
-=======
-
 import './Login.css';
-
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
 import logo from './Picture/Ling logo.png'
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -158,34 +152,8 @@ class Login extends Component {
            ลืมรหัสผ่าน
                     </div>
                 <br /> <br />
-
-<<<<<<< HEAD
-                </div >
-
-            )
-        }
-    }
-    render() {
-        const { classes } = this.props;
-        return (
-            <div>
-                <Drawer
-                    variant="permanent"
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
-                    anchor={'left'}
-                >
-                    {this.renderLogin()}
-                </Drawer>
-            </div>
-
-
-        );
-=======
             </div>
         )
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
     }
 }
 
