@@ -42,6 +42,7 @@ class Login extends Component {
     //     //     }
     //     // });
     // }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -53,7 +54,6 @@ class Login extends Component {
         this.loginGoogle = this.loginGoogle.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.loginEmail = this.loginEmail.bind(this);
-        this.logout = this.logout.bind(this);
     }
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value });
@@ -96,11 +96,6 @@ class Login extends Component {
         }).catch(function (error) {
         });
 
-    }
-
-    logout() {
-        firebase.auth().signOut();
-        this.setState({ user: null });
     }
 
     componentWillMount() {

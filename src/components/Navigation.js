@@ -33,7 +33,6 @@ class PermanentDrawer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: this.props.user
         }
         this.onSetUser = this.onSetUser.bind(this)
         this.logout = this.logout.bind(this)
