@@ -6,14 +6,12 @@ import Polyline from './components/Polyline';
 import SearchBox from './components/searchBox';
 import ExampleLine from './components/ExampleLine';
 import ExamplePolygon from './components/ExamplePolygon';
-import { db } from './config/firebase';
 import NiceModal from './components/Modal';
 import GeolocatedMe from './components/Geolocation';
 import IconLabelButtons from './components/DrawingBtn';
 import UserLocationMarker from './components/UserLocationMarker';
-import PermanentDrawer from './components/Navigation';
 import Login from './components/Login';
-
+import { db } from './config/firebase'
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
 
@@ -457,7 +455,6 @@ class App extends Component {
     })
     let planData = this.state.planData
     var self = this
-
     planRef.get().then(function (querySnapshot) {
       querySnapshot.forEach(function (doc) {
         planData.push({

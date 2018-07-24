@@ -1,7 +1,6 @@
 div.loginpage{
   /* Set rules to fill background */
 min-height: 100%;
-
 /* Set up proportionate scaling */
 width: 100%;
 height: auto;
@@ -155,8 +154,8 @@ filter: blur(5px);
   }
   
   .App-logo {
-    height: 100px;
-    width: 100px;
+    height: 110px;
+    width: 110px;
   }
   
   
@@ -216,3 +215,5 @@ filter: blur(5px);
  .inputLogin{
    text-align: center;
  }
+
+ 

@@ -5,12 +5,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import './Login.css'
-import {
-    Form,
-    FormGroup,
-} from 'reactstrap';
-import { Button } from '../../node_modules/@material-ui/core';
-import Plans from './Plans';
 
 import logo from './Picture/Ling logo.png'
 import TextField from '@material-ui/core/TextField';
@@ -20,6 +14,10 @@ import Lock from '@material-ui/icons/Lock';
 import Drawer from '@material-ui/core/Drawer';
 import PermanentDrawer from './Navigation'
 
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+
+
 
 const drawerWidth = '25vw';
 
@@ -28,7 +26,9 @@ const styles = theme => ({
         position: 'relative',
         width: drawerWidth,
     },
-
+    inputLogin: {
+        textAlign: 'center'
+    }
 });
 
 class Login extends Component {
@@ -122,7 +122,7 @@ class Login extends Component {
                         onSelectCurrentPlanData={this.props.onSelectCurrentPlanData}
                         user={this.state.user}
                     />
-                    <button onClick={this.logout}>logout</button>
+                    <button class="logout" onClick={this.logout}>logout</button>
                 </div>
             )
         } else {
@@ -130,11 +130,11 @@ class Login extends Component {
             return (
                 //loading container wrapper LoginFont
                 <div>
-                    <div className="loadingpage">
+                    <div className="loading container wrapper LoginFont">
                         <p class="logo"><img src={logo} className="App-logo" alt="logo" />
                             <br /> Log In </p>
                         <div class="inputLogin">
-                            <Form>
+                            <FormControl component="fieldset">
                                 <FormGroup>
                                     <Grid container spacing={8} alignItems="flex-end">
                                         <Grid item>
@@ -155,7 +155,7 @@ class Login extends Component {
                                         </Grid>
                                     </Grid>
                                 </FormGroup>
-                            </Form>
+                            </FormControl>
                         </div>
                         <br />
                         <div class="LoginButton">
@@ -174,7 +174,8 @@ class Login extends Component {
                         <br /> <br />
 
                     </div>
-                </div>
+
+                </div >
 
             )
         }
