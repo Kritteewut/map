@@ -13,11 +13,7 @@ import UserLocationMarker from './components/UserLocationMarker';
 import PermanentDrawer from './components/Navigation'
 import Login from './components/Login';
 import { db } from './config/firebase'
-<<<<<<< HEAD
 import OverlayOptions from './components/OverlayOptions';
-=======
-import './App.css';
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
 
@@ -65,15 +61,12 @@ class App extends Component {
       polylineLength: 0,
       planData: [],
       currentPlanData: [],
-<<<<<<< HEAD
       fillColor: '#FFA500',
       strokeColor: '#FF4500',
       user: null,
-=======
       selectedColor: '',
       user: null,
       currentDate: new Date(),
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
@@ -89,13 +82,9 @@ class App extends Component {
     this.onSelectCurrentPlanData = this.onSelectCurrentPlanData.bind(this)
     this.onSaveToFirestore = this.onSaveToFirestore.bind(this)
     this.onSetUser = this.onSetUser.bind(this)
-<<<<<<< HEAD
     this.onChangePolyStrokeColor = this.onChangePolyStrokeColor.bind(this)
     this.onChangePolyFillColor = this.onChangePolyFillColor.bind(this)
 
-=======
-    // this.onSetDate = this.onSetDate.bind(this)
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
   }
   componentDidMount() {
     this.onQueryPlanFromFirestore()
@@ -567,22 +556,7 @@ class App extends Component {
     }, () => console.log(this.state.user.uid))
   }
 
-<<<<<<< HEAD
   //this is rederrrrr
-=======
-  // onSetDate() {
-  //   var currentDate = this.state.currentDate
-  //   var day = currentDate.getDate();
-  //   var month = currentDate.getMonth();
-  //   var year = currentDate.getYear();
-
-  //   var dayString = moment(year + '-' + month + '-' + day).format('DD/MMM/YYYY');
-  //   this.setState({
-  //     currentDate: dayString
-  //   })
-  // }
-
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
   render() {
     var self = this;
     if (self.state.status === 'start') {
@@ -684,36 +658,17 @@ class App extends Component {
           />
 
         </MapClass>
-<<<<<<< HEAD
         <Login
-=======
-        <PermanentDrawer
-          planData={this.state.planData}
-          currentPlanData={this.state.currentPlanData}
-          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
-          onSetSelectedColor={this.onSetSelectedColor}
-          onSetUser={this.onSetUser}
-          user={this.state.user}
-        />
-        {/* <Login
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
           onSelectCurrentPlanData={this.onSelectCurrentPlanData}
           onSetUser={this.onSetUser}
-<<<<<<< HEAD
         />
         <OverlayOptions
           onSetSelectedColor={this.onSetSelectedColor}
           onChangePolyStrokeColor={this.onChangePolyStrokeColor}
           onChangePolyFillColor={this.onChangePolyFillColor}
         />
-=======
-        /> */}
-        {/*
-        optiosn
-        */}
->>>>>>> b4c2239856e5e961f6b6a49f1dc7bc4212b7e413
       </div>
     );
   }

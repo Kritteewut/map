@@ -13,8 +13,6 @@ import PermanentDrawer from './Navigation'
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 
-
-
 const drawerWidth = '25vw';
 
 const styles = theme => ({
