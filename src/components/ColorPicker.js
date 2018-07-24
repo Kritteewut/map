@@ -8,25 +8,63 @@ class ColorPicker extends Component {
         super(props)
         this.state = {
             pickedColor: '#fff',
+            isVisible: 'none',
+            btnType: 'strokeColor',
         };
+        this.handleStrokeColorButtonClick = this.handleStrokeColorButtonClick.bind(this)
+        this.handleFillColorButtonClick = this.handleFillColorButtonClick.bind(this)
+
     }
 
     handleChangeComplete = (color) => {
+        const { btnType } = this.state
         this.setState({
             pickedColor: color.hex
         });
-        this.props.onSetSelectedColor(color.hex)
+        if (btnType === 'strokeColor') {
+            this.props.onChangePolyStrokeColor(color.hex)
+        }
+        if (btnType === 'fillColor') {
+            this.props.onChangePolyFillColor(color.hex)
+
+        }
     };
 
+    handleStrokeColorButtonClick() {
+        this.setState({
+            btnType: 'strokeColor',
+        })
+        console.log('strokeColor')
+    }
+    handleFillColorButtonClick() {
+        this.setState({
+            btnType: 'fillColor',
+        })
+        console.log('fillColor')
+    }
+
     render() {
+        const { pickedColor } = this.state
         return (
+
             <div>
+                <button
+                    onClick={this.handleStrokeColorButtonClick}
+                >
+                    เปลี่ยนสีเส้น
+                    </button>
+                <button
+                    onClick={this.handleFillColorButtonClick}
+                >
+                    เปลี่ยนสีพื้นที่
+                    </button>
                 <TwitterPicker
                     triangle={'hide'}
-                    color={this.state.pickedColor}
+                    color={pickedColor}
                     colors={colorArray}
                     onChangeComplete={this.handleChangeComplete}
                 />
+
             </div>
         )
     }

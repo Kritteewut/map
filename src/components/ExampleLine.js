@@ -13,7 +13,7 @@ class ExampleLine extends Component {
         this.exampleLine.setMap(null)
     }
     redrawExampleLine() {
-        var exampleLineCoords = this.props.exampleLineCoords
+        var { exampleLineCoords, strokeColor } = this.props
         if (this.exampleLine === false) {
             this.exampleLine = new window.google.maps.Polyline({
                 path: exampleLineCoords,
@@ -21,12 +21,13 @@ class ExampleLine extends Component {
                 clickable: false,
                 strokeOpacity: 0.5,
                 overlayType: 'exampleLine',
+                strokeColor: strokeColor,
             })
-
         }
         else {
             this.exampleLine.setOptions({
                 path: exampleLineCoords,
+                strokeColor: strokeColor,
             })
             //onSquereMetersTrans(this.polygon)
         }
