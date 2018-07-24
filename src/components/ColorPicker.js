@@ -7,8 +7,7 @@ class ColorPicker extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            pickedColor: '#fff',
-            isVisible: 'none',
+            pickedColor: '#ffffff',
             btnType: 'strokeColor',
         };
         this.handleStrokeColorButtonClick = this.handleStrokeColorButtonClick.bind(this)
@@ -34,13 +33,11 @@ class ColorPicker extends Component {
         this.setState({
             btnType: 'strokeColor',
         })
-        console.log('strokeColor')
     }
     handleFillColorButtonClick() {
         this.setState({
             btnType: 'fillColor',
         })
-        console.log('fillColor')
     }
 
     render() {

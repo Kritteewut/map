@@ -19,19 +19,26 @@ class OverlayOptions extends Component {
         })
     }
     render() {
-        const { onChangePolyStrokeColor, onChangePolyFillColor } = this.props
+        const { onChangePolyStrokeColor, onChangePolyFillColor, isOverlayOptionsOpen, overlayOptionsType } = this.props
         return (
+
             <div>
+
                 <Drawer
                     variant="persistent"
                     anchor={'bottom'}
-                    open={this.state.isOpen}
-                //onClick={this.onToggleOpen}
+                    open={isOverlayOptionsOpen}
                 >
-                    <ColorPicker
-                        onChangePolyStrokeColor={onChangePolyStrokeColor}
-                        onChangePolyFillColor={onChangePolyFillColor}
-                    />
+                    {overlayOptionsType === 'marker' ?
+                        <button>
+                            55555
+                        </button>
+                        :
+                        <ColorPicker
+                            onChangePolyStrokeColor={onChangePolyStrokeColor}
+                            onChangePolyFillColor={onChangePolyFillColor}
+                        />
+                    }
                 </Drawer>
             </div>
         )

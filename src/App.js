@@ -61,12 +61,14 @@ class App extends Component {
       polylineLength: 0,
       planData: [],
       currentPlanData: [],
-      fillColor: '#FFA500',
-      strokeColor: '#FF4500',
+      fillColor: '#ffa500',
+      strokeColor: '#ff4500',
       user: null,
       selectedColor: '',
       user: null,
       currentDate: new Date(),
+      isOverlayOptionsOpen: false,
+      overlayOptionsType: '',
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
@@ -126,9 +128,11 @@ class App extends Component {
       const coordsLength = currentOvrelay.coords.length
       if (currentOvrelay.overlayType === 'polygon' && coordsLength < 3) {
         overlayCoords.splice(overlayCoords.length - 1, 1)
+        alert('รูปหลายเหลี่ยมที่มีจำนวนจุดมากกว่าสองจุดเท่านั้นจึงจะถูกบันทึกได้')
       }
       if (currentOvrelay.overlayType === 'polyline' && coordsLength < 2) {
         overlayCoords.splice(overlayCoords.length - 1, 1)
+        alert('เส้นเชื่อมที่มีจำนวนจุดมากหนึ่งจุดเท่านั้นจึงจะถูกบันทึกได้')
       }
       this.setState((prevState) => {
         return {
@@ -143,6 +147,8 @@ class App extends Component {
   onAddListenerMarkerBtn() {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('marker'))) {
+      this.onSetMarkerOptions()
+      this.onOverlayOptionsOpen()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawMarker()
@@ -151,6 +157,8 @@ class App extends Component {
   onAddListenerPolygonBtn() {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polygon'))) {
+      this.onSetPolyOptions()
+      this.onOverlayOptionsOpen()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolygon()
@@ -159,12 +167,15 @@ class App extends Component {
   onAddListenerPolylineBtn() {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polyline'))) {
+      this.onOverlayOptionsOpen()
+      this.onSetPolyOptions()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolyline()
     }
   }
   onAddListenerGrabBtn() {
+    this.onOverlayOptionsClose()
     this.onClearSomeMapEventListener()
     this.onUtilitiesMethod()
     this.onSetDragMapCursor()
@@ -364,10 +375,8 @@ class App extends Component {
       let lng = element.lng()
       editCoords.push({ lat, lng })
     })
-    this.setState(
-      overlayCoords[overlayIndex].coords = editCoords
-    )
-
+    overlayCoords[overlayIndex].coords = editCoords
+    this.setState({ overlayCoords })
     console.log(this.state.overlayCoords[overlayIndex], 'ediited coords')
   }
 
@@ -529,31 +538,59 @@ class App extends Component {
     }
   }
   onChangePolyStrokeColor(color) {
-    let { selectedOverlay, strokeColor } = this.state
+    var { selectedOverlay, strokeColor, overlayCoords } = this.state
     if (selectedOverlay !== null) {
       selectedOverlay.setOptions({
         strokeColor: color
-      }, () => console.log(strokeColor))
+      })
+      let polyIndex = selectedOverlay.overlayIndex
+      let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
+      overlayCoords[overlayIndex].strokeColor = color
+      this.setState({ overlayCoords })
     }
     this.setState({
       strokeColor: color
     })
   }
   onChangePolyFillColor(color) {
-    let { selectedOverlay, fillColor } = this.state
+    var { selectedOverlay, fillColor, overlayCoords } = this.state
     if (selectedOverlay) {
       selectedOverlay.setOptions({
         fillColor: color
       })
+      let polyIndex = selectedOverlay.overlayIndex
+      let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
+      overlayCoords[overlayIndex].fillColor = color
+      this.setState({ overlayCoords })
     }
     this.setState({
       fillColor: color
-    }, () => console.log(fillColor))
+    })
   }
   onSetUser(user) {
     this.setState({
       user: user
     }, () => console.log(this.state.user.uid))
+  }
+  onOverlayOptionsOpen() {
+    this.setState({
+      isOverlayOptionsOpen: true
+    })
+  }
+  onOverlayOptionsClose() {
+    this.setState({
+      isOverlayOptionsOpen: false
+    })
+  }
+  onSetMarkerOptions() {
+    this.setState({
+      overlayOptionsType: 'marker'
+    })
+  }
+  onSetPolyOptions() {
+    this.setState({
+      overlayOptionsType: 'poly'
+    })
   }
 
   //this is rederrrrr
@@ -658,7 +695,7 @@ class App extends Component {
           />
 
         </MapClass>
-        <Login
+        <PermanentDrawer
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
           onSelectCurrentPlanData={this.onSelectCurrentPlanData}
@@ -668,6 +705,7 @@ class App extends Component {
           onSetSelectedColor={this.onSetSelectedColor}
           onChangePolyStrokeColor={this.onChangePolyStrokeColor}
           onChangePolyFillColor={this.onChangePolyFillColor}
+          {...this.state}
         />
       </div>
     );
