@@ -10,10 +10,13 @@ import NiceModal from './components/Modal';
 import GeolocatedMe from './components/Geolocation';
 import IconLabelButtons from './components/DrawingBtn';
 import UserLocationMarker from './components/UserLocationMarker';
+import PermanentDrawer from './components/Navigation'
 import Login from './components/Login';
 import { db } from './config/firebase'
+import './App.css';
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
+
 
 function new_script(src) {
   return new Promise(function (resolve, reject) {
@@ -35,7 +38,7 @@ var my_script2 = new_script('https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/
 
 class App extends Component {
   static async getInitialProps(props) {
-    return console.log('get init!',props)
+    return console.log('get init!', props)
     // auth.onAuthStateChanged((user) => {
     //     if (user) {
     //         this.setState({ user });
@@ -60,7 +63,8 @@ class App extends Component {
       planData: [],
       currentPlanData: [],
       selectedColor: '',
-      user: null
+      user: null,
+      currentDate: new Date(),
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
@@ -77,6 +81,7 @@ class App extends Component {
     this.onSaveToFirestore = this.onSaveToFirestore.bind(this)
     this.onSetSelectedColor = this.onSetSelectedColor.bind(this)
     this.onSetUser = this.onSetUser.bind(this)
+    // this.onSetDate = this.onSetDate.bind(this)
   }
   componentDidMount() {
     this.onQueryPlanFromFirestore()
@@ -507,6 +512,18 @@ class App extends Component {
     }, () => console.log(this.state.user.uid))
   }
 
+  // onSetDate() {
+  //   var currentDate = this.state.currentDate
+  //   var day = currentDate.getDate();
+  //   var month = currentDate.getMonth();
+  //   var year = currentDate.getYear();
+
+  //   var dayString = moment(year + '-' + month + '-' + day).format('DD/MMM/YYYY');
+  //   this.setState({
+  //     currentDate: dayString
+  //   })
+  // }
+
   render() {
     var self = this;
     if (self.state.status === 'start') {
@@ -600,20 +617,24 @@ class App extends Component {
             onSaveToFirestore={this.onSaveToFirestore}
           />
         </MapClass>
-        {/* <PermanentDrawer
-          planData={this.state.planData}
-          currentPlanData={this.state.currentPlanData}
-          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
-          onSetSelectedColor={this.onSetSelectedColor}
-        /> */}
-        <Login
+        <PermanentDrawer
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
           onSelectCurrentPlanData={this.onSelectCurrentPlanData}
           onSetSelectedColor={this.onSetSelectedColor}
           onSetUser={this.onSetUser}
-
+          user={this.state.user}
         />
+        {/* <Login
+          planData={this.state.planData}
+          currentPlanData={this.state.currentPlanData}
+          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
+          onSetSelectedColor={this.onSetSelectedColor}
+          onSetUser={this.onSetUser}
+        /> */}
+        {/*
+        optiosn
+        */}
       </div>
     );
   }

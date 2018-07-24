@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import '../App.css';
 class MapClass extends Component {
     constructor(props) {
         super(props);
@@ -40,7 +40,7 @@ class MapClass extends Component {
                 style={{
                     position: 'absolute',
                     top: 0,
-                    left: '25vw',
+                    left: 0,
                     right: 0,
                     bottom: 0,
                     justifyContent: 'flex-end',

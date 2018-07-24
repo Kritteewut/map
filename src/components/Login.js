@@ -4,7 +4,7 @@ import firebase, { auth, provider, provider2 } from '../config/firebase';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import './Login.css'
+import './Login.css';
 
 import logo from './Picture/Ling logo.png'
 import TextField from '@material-ui/core/TextField';
@@ -33,15 +33,15 @@ const styles = theme => ({
 
 class Login extends Component {
 
-    static async getInitialProps() {
-        return console.log('get init!')
-        // auth.onAuthStateChanged((user) => {
-        //     if (user) {
-        //         this.setState({ user });
-        //         console.log(user)
-        //     }
-        // });
-    }
+    // static async getInitialProps() {
+    //     return console.log('get init!')
+    //     // auth.onAuthStateChanged((user) => {
+    //     //     if (user) {
+    //     //         this.setState({ user });
+    //     //         console.log(user)
+    //     //     }
+    //     // });
+    // }
     constructor(props) {
         super(props);
         this.state = {
@@ -52,14 +52,14 @@ class Login extends Component {
         this.loginFacebook = this.loginFacebook.bind(this);
         this.loginGoogle = this.loginGoogle.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.loginE = this.loginE.bind(this);
+        this.loginEmail = this.loginEmail.bind(this);
         this.logout = this.logout.bind(this);
     }
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    loginE(e) {
+    loginEmail(e) {
         e.preventDefault();
         var email = this.state.email
         var password = this.state.password
@@ -104,96 +104,61 @@ class Login extends Component {
     }
 
     componentWillMount() {
-        // auth.onAuthStateChanged((user) => {
-        //     if (user) {
-        //         this.setState({ user });
-        //     }
-        // });
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                this.setState({ user });
+            }
+        });
     }
 
-    renderLogin() {
-
-        if (this.state.user) {
-            return (
-                <div>
-                    <PermanentDrawer
-                        planData={this.props.planData}
-                        currentPlanData={this.props.currentPlanData}
-                        onSelectCurrentPlanData={this.props.onSelectCurrentPlanData}
-                        user={this.state.user}
-                    />
-                    <button class="logout" onClick={this.logout}>logout</button>
-                </div>
-            )
-        } else {
-
-            return (
-                //loading container wrapper LoginFont
-                <div>
-                    <div className="loading container wrapper LoginFont">
-                        <p class="logo"><img src={logo} className="App-logo" alt="logo" />
-                            <br /> Log In </p>
-                        <div class="inputLogin">
-                            <FormControl component="fieldset">
-                                <FormGroup>
-                                    <Grid container spacing={8} alignItems="flex-end">
-                                        <Grid item>
-                                            <AccountCircle />
-                                        </Grid>
-                                        <Grid item>
-                                            <TextField value={this.state.email} onChange={this.handleChange} name="email" type="email" id="input-with-icon-grid" label="Enter email" />
-                                        </Grid>
-                                    </Grid>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Grid container spacing={8} alignItems="flex-end">
-                                        <Grid item>
-                                            <Lock />
-                                        </Grid>
-                                        <Grid item>
-                                            <TextField value={this.state.password} onChange={this.handleChange} name="password" type="password" id="input-with-icon-grid" label="Enter Password" />
-                                        </Grid>
-                                    </Grid>
-                                </FormGroup>
-                            </FormControl>
-                        </div>
-                        <br />
-                        <div class="LoginButton">
-                            <button type="submit" onClick={this.loginE} class="loginBtn loginBtn--L">&nbsp;Log In with email</button>
-                            <br />
-                            <p class='Or'> or </p>
-
-                            <button className="loginBtn loginBtn--facebook" onClick={this.loginFacebook}> Log In with Facebook</button>
-                            <button className="loginBtn loginBtn--google" onClick={this.loginGoogle}>Log In with Google</button><br />
-                        </div>
-                        <br />
-                        <div class="regisBtn">
-                            สมัครสมาชิก&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                   ลืมรหัสผ่าน
-                    </div>
-                        <br /> <br />
-
-                    </div>
-
-                </div >
-
-            )
-        }
-    }
     render() {
-        const { classes } = this.props;
         return (
-            <Drawer
-                variant="permanent"
-                classes={{
-                    paper: classes.drawerPaper,
-                }}
-                anchor={'left'}
-            >
-                {this.renderLogin()}
-            </Drawer>
+            //loading container wrapper LoginFont
+            <div className="loading container wrapper LoginFont">
+                <p class="logo"><img src={logo} className="App-logo" alt="logo" />
+                    <br /> Log In </p>
+                <div class="inputLogin">
+                    <FormControl component="fieldset">
+                        <FormGroup>
+                            <Grid container spacing={8} alignItems="flex-end">
+                                <Grid item>
+                                    <AccountCircle />
+                                </Grid>
+                                <Grid item>
+                                    <TextField value={this.state.email} onChange={this.handleChange} name="email" type="email" id="input-with-icon-grid" label="Enter email" />
+                                </Grid>
+                            </Grid>
+                        </FormGroup>
+                        <FormGroup>
+                            <Grid container spacing={8} alignItems="flex-end">
+                                <Grid item>
+                                    <Lock />
+                                </Grid>
+                                <Grid item>
+                                    <TextField value={this.state.password} onChange={this.handleChange} name="password" type="password" id="input-with-icon-grid" label="Enter Password" />
+                                </Grid>
+                            </Grid>
+                        </FormGroup>
+                    </FormControl>
+                </div>
+                <br />
+                <div class="LoginButton">
+                    <button type="submit" onClick={this.loginEmail} class="loginBtn loginBtn--L">&nbsp;Log In with email</button>
+                    <br />
+                    <p class='Or'> or </p>
 
-        );
+                    <button className="loginBtn loginBtn--facebook" onClick={this.loginFacebook}> Log In with Facebook</button>
+                    <button className="loginBtn loginBtn--google" onClick={this.loginGoogle}>Log In with Google</button><br />
+                </div>
+                <br />
+                <div class="regisBtn">
+                    สมัครสมาชิก&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           ลืมรหัสผ่าน
+                    </div>
+                <br /> <br />
+
+            </div>
+        )
     }
 }
 
