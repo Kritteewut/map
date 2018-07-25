@@ -19,8 +19,6 @@ import icon_point from './components/icons/icon_point.png';
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
 
-
-
 function new_script(src) {
   return new Promise(function (resolve, reject) {
     var script = document.createElement('script');
