@@ -34,9 +34,8 @@ class MapClass extends Component {
         if (this.state.isLoad === true) {
             childrenOutput = this.props.children;
         }
-
         return (
-            <div
+            <span
                 style={{
                     position: 'absolute',
                     top: 0,
@@ -48,7 +47,7 @@ class MapClass extends Component {
                 }}
                 id="map">
                 {childrenOutput}
-            </div>
+            </span>
         );
     }
 }
