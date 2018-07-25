@@ -39,7 +39,7 @@ class MapClass extends Component {
                 style={{
                     position: 'absolute',
                     top: 0,
-                    left: 0,
+                    left: '25vw',
                     right: 0,
                     bottom: 0,
                     justifyContent: 'flex-end',

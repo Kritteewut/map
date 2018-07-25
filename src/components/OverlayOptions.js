@@ -45,6 +45,7 @@ class OverlayOptions extends Component {
                 // classes={{
                 //     paper: classes.drawerPaper,
                 // }}
+                width="50%"
                 variant="persistent"
                 anchor={'bottom'}
                 open={isOverlayOptionsOpen}

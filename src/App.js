@@ -473,6 +473,7 @@ class App extends Component {
       window.map.panTo({ lat: position.coords.latitude, lng: position.coords.longitude })
       LatLngString = 'lattitude : '+position.coords.latitude.toFixed(4) +' , '+'longtitude : '+  position.coords.longitude.toFixed(4)
       this.setState({
+        userLocationCoords: [{ lat: position.coords.latitude, lng: position.coords.longitude }],
         userLocation: LatLngString,
         yourLocation: 'Your Location'
       })
