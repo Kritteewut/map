@@ -14,19 +14,19 @@ import Pic from './Picture/User-dummy-300x300.png';
 import firebase, { auth, provider, provider2 } from '../config/firebase';
 import '../App.css';
 
-const drawerWidth = '25vw';
+
 
 const styles = theme => ({
     drawerPaper: {
         position: 'relative',
-        width: drawerWidth,
+        width: '20vw',
+
     }, avatar: {
         margin: 0,
     },
     card: {
         maxWidth: 400,
     },
-
 });
 
 class PermanentDrawer extends Component {
@@ -121,22 +121,15 @@ class PermanentDrawer extends Component {
     render() {
         const { classes } = this.props;
         return (
-            <div
-
+            <Drawer
+                variant="permanent"
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+                anchor={'left'}
             >
-                <Drawer
-                    variant="permanent"
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
-                    anchor={'left'}
-                >
-                    {this.renderDrawer()}
-                </Drawer>
-
-            </div>
-
-
+                {this.renderDrawer()}
+            </Drawer>
         );
     }
 }

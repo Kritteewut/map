@@ -2,6 +2,23 @@ import React, { Component } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import ColorPicker from './ColorPicker';
 import Divider from '@material-ui/core/Divider';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import IconPicker from './IconPicker';
+
+
+const styles = theme => ({
+    drawerPaper: {
+        position: 'relative',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+});
+
 class OverlayOptions extends Component {
     constructor(props) {
         super(props);
@@ -19,29 +36,40 @@ class OverlayOptions extends Component {
         })
     }
     render() {
-        const { onChangePolyStrokeColor, onChangePolyFillColor, isOverlayOptionsOpen, overlayOptionsType } = this.props
+        const { classes, theme } = this.props;
+        const { onChangePolyStrokeColor,
+            onChangePolyFillColor,
+            isOverlayOptionsOpen,
+            overlayOptionsType,
+            onSetSelectedIcon, } = this.props
         return (
-
-            <div>
-
-                <Drawer
-                    variant="persistent"
-                    anchor={'bottom'}
-                    open={isOverlayOptionsOpen}
-                >
-                    {overlayOptionsType === 'marker' ?
-                        <button>
-                            55555
-                        </button>
-                        :
-                        <ColorPicker
-                            onChangePolyStrokeColor={onChangePolyStrokeColor}
-                            onChangePolyFillColor={onChangePolyFillColor}
-                        />
-                    }
-                </Drawer>
-            </div>
+            <Drawer
+                // classes={{
+                //     paper: classes.drawerPaper,
+                // }}
+                variant="persistent"
+                anchor={'bottom'}
+                open={isOverlayOptionsOpen}
+            >
+                {overlayOptionsType === 'marker' ?
+                    <IconPicker
+                        onSetSelectedIcon={onSetSelectedIcon}
+                    />
+                    :
+                    <ColorPicker
+                        onChangePolyStrokeColor={onChangePolyStrokeColor}
+                        onChangePolyFillColor={onChangePolyFillColor}
+                    />
+                }
+            </Drawer>
         )
     }
 }
-export default OverlayOptions
+
+OverlayOptions.propTypes = {
+    classes: PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles, { withTheme: true })(OverlayOptions);
+
