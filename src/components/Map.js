@@ -9,7 +9,7 @@ class MapClass extends Component {
         this.state = {
             isLoad: false,
             zoom: 15,
-            center: { lat: 13.0003076, lng: 96.992706 },
+            center: { lat: 13.0003076, lng: 100 },
         }
     }
     componentDidMount() {

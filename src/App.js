@@ -14,6 +14,8 @@ import PermanentDrawer from './components/Navigation'
 import Login from './components/Login';
 import { db } from './config/firebase'
 import OverlayOptions from './components/OverlayOptions';
+import DetailedExpansionPanel from './components/DetailedExpansionPanel'
+
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
 
@@ -488,13 +490,16 @@ class App extends Component {
     });
   }
   getGeolocation() {
+    var LatLngString = ''
     navigator.geolocation.getCurrentPosition(position => {
       console.log(position.coords)
       window.map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude })
       window.map.setZoom(18)
       window.map.panTo({ lat: position.coords.latitude, lng: position.coords.longitude })
+      LatLngString = 'lattitude : '+position.coords.latitude.toFixed(4) +' , '+'longtitude : '+  position.coords.longitude.toFixed(4)
       this.setState({
-        userLocationCoords: [{ lat: position.coords.latitude, lng: position.coords.longitude }]
+        userLocation: LatLngString,
+        yourLocation: 'Your Location'
       })
     })
   }
@@ -695,6 +700,7 @@ class App extends Component {
           />
 
         </MapClass>
+        <DetailedExpansionPanel userLocation={this.state.userLocation} yourLocation={this.state.yourLocation}/>
         <PermanentDrawer
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
