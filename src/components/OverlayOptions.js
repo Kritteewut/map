@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import ColorPicker from './ColorPicker';
+import Divider from '@material-ui/core/Divider';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import IconPicker from './IconPicker';
@@ -9,6 +10,11 @@ import IconPicker from './IconPicker';
 const styles = theme => ({
     drawerPaper: {
         zIndex: 0,
+        position: 'absolute',
+        left: '35vw',
+        right: '35vw',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
     },
 });
 
@@ -29,7 +35,7 @@ class OverlayOptions extends Component {
         })
     }
     render() {
-        const { classes } = this.props;
+        const { classes, theme } = this.props;
         const { onChangePolyStrokeColor,
             onChangePolyFillColor,
             isOverlayOptionsOpen,
@@ -42,20 +48,15 @@ class OverlayOptions extends Component {
                 // classes={{
                 //     paper: classes.drawerPaper,
                 // }}
-
                 width="50%"
                 variant="persistent"
-                anchor={this.props.openOption}
+                anchor={'bottom'}
                 open={isOverlayOptionsOpen}
-                classes={{
-                    paper: classes.drawerPaper,
-                }}
             >
                 {overlayOptionsType === 'marker' ?
                     <div>
                         <IconPicker
                             onSetSelectedIcon={onSetSelectedIcon}
-                            left={this.props.left}
                         />
 
                         {selectedOverlay !== null ?
@@ -86,3 +87,4 @@ OverlayOptions.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(OverlayOptions);
+
