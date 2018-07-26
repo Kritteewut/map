@@ -9,9 +9,6 @@ class ExampleLine extends Component {
         this.redrawExampleLine = this.redrawExampleLine.bind(this)
         //this. = this..bind(this)
     }
-    componentWillUnmount() {
-        this.exampleLine.setMap(null)
-    }
     redrawExampleLine() {
         var { exampleLineCoords, strokeColor } = this.props
         if (this.exampleLine === false) {
@@ -29,7 +26,6 @@ class ExampleLine extends Component {
                 path: exampleLineCoords,
                 strokeColor: strokeColor,
             })
-            //onSquereMetersTrans(this.polygon)
         }
     }
     render() {

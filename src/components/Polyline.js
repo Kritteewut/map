@@ -14,6 +14,13 @@ class Polyline extends Component {
             this.polyline.setMap(null)
         }
     }
+    componentDidUpdate() {
+        if (this.polyline !== false && this.props.isFirstDraw === true) {
+            this.polyline.setOptions({
+                clickable: true
+            })
+        }
+    }
     redrawPolyline() {
         var {
             overlayCoords,
@@ -30,17 +37,17 @@ class Polyline extends Component {
                 suppressUndo: true,
                 overlayDrawType: overlayDrawType,
                 strokeColor: strokeColor,
+                clickable: true
 
             })
             this.props.addPolylineListener(this.polyline)
-            //this.props.onPolylineLengthCompute(this.polyline)
+            
         }
         else {
             if (overlayCoords.length > 0) {
                 this.polyline.setOptions({
                     path: overlayCoords,
                 })
-                //this.props.onPolylineLengthCompute(this.polyline)
             }
         }
     }

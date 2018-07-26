@@ -10,7 +10,7 @@ class ExamplePolygon extends Component {
         //this. = this..bind(this)
     }
     redrawExamplePolygon() {
-        var examplePolygonCoords = this.props.examplePolygonCoords
+        const { examplePolygonCoords } = this.props
         if (this.examplePolygon === false) {
             this.examplePolygon = new window.google.maps.Polygon({
                 path: examplePolygonCoords,
@@ -21,7 +21,6 @@ class ExamplePolygon extends Component {
                 strokeColor: '#aa0011',
                 fillColor: '#1122aa',
                 strokeWeight: '10',
-                draggable: true
             })
         }
         else {

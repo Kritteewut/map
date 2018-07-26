@@ -15,14 +15,13 @@ class Polygon extends Component {
         }
     }
     componentDidUpdate() {
-        if (this.polygon !== false && this.props.isFirstDraw !== true) {
+        if (this.polygon !== false && this.props.isFirstDraw === true) {
             this.polygon.setOptions({
                 clickable: true
             })
         }
     }
     redrawPolygon() {
-        //var onSquereMetersTrans = this.props.onSquereMetersTrans
         const {
             overlayCoords,
             overlayIndex,
@@ -50,7 +49,6 @@ class Polygon extends Component {
                 this.polygon.setOptions({
                     path: overlayCoords,
                 })
-                //onSquereMetersTrans(this.polygon)
             }
         }
     }
