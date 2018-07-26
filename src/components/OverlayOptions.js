@@ -9,15 +9,12 @@ import IconPicker from './IconPicker';
 
 const styles = theme => ({
     drawerPaper: {
-<<<<<<< HEAD
         zIndex: 0,
-=======
         position: 'absolute',
         left: '35vw',
         right: '35vw',
         justifyContent: 'flex-end',
         alignItems: 'center',
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
     },
 });
 
@@ -41,35 +38,16 @@ class OverlayOptions extends Component {
         const { classes, theme } = this.props;
         const { onChangePolyStrokeColor,
             onChangePolyFillColor,
-<<<<<<< HEAD
-            overlayOptionsType,
-            onSetSelectedIcon, } = this.props
-=======
             isOverlayOptionsOpen,
             overlayOptionsType,
             onSetSelectedIcon,
             selectedOverlay,
         } = this.props
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
         return (
             <Drawer
                 // classes={{
                 //     paper: classes.drawerPaper,
                 // }}
-<<<<<<< HEAD
-                variant="persistent"
-                anchor={'bottom'}
-                open={this.props.openOption}
-                classes={{
-                    paper: classes.drawerPaper,
-                }}
-            >
-                {overlayOptionsType === 'marker' ?
-                    <IconPicker
-                        onSetSelectedIcon={onSetSelectedIcon}
-                        left={this.props.left}
-                    />
-=======
                 width="50%"
                 variant="persistent"
                 anchor={'bottom'}
@@ -91,7 +69,6 @@ class OverlayOptions extends Component {
                         }
 
                     </div>
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
                     :
                     <ColorPicker
                         onChangePolyStrokeColor={onChangePolyStrokeColor}
@@ -109,9 +86,5 @@ OverlayOptions.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-<<<<<<< HEAD
-export default withStyles(styles, { withTheme: true })(OverlayOptions);
-=======
 export default withStyles(styles, { withTheme: true })(OverlayOptions);
 
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
