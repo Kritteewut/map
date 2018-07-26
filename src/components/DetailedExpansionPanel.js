@@ -29,7 +29,6 @@ const styles = theme => ({
   },
 });
 
-
 class DetailedExpansionPanel extends Component {
   constructor(props) {
     super(props);

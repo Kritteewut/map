@@ -12,13 +12,21 @@ const styles = theme => ({
         display: 'flex',
         flexWrap: 'wrap',
         minWidth: 300,
+<<<<<<< HEAD
+        width: '50%',
+=======
         width: '100%',
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
         minHeigth: 200,
 
     },
     image: {
         position: 'relative',
+<<<<<<< HEAD
+        height: '8.7vw',
+=======
         height: 200,
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
         [theme.breakpoints.down('xs')]: {
             width: '100% !important', // Overrides inline-style
             height: 100,
@@ -54,6 +62,10 @@ const styles = theme => ({
         right: 0,
         top: 0,
         bottom: 0,
+<<<<<<< HEAD
+        width: '8.7vw',
+=======
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
         backgroundSize: 'cover',
         backgroundPosition: 'center 40%',
     },
@@ -126,6 +138,44 @@ class IconPicker extends Component {
         const { classes } = this.props;
 
         return (
+<<<<<<< HEAD
+            <div
+                style={{
+                    height: '8.7vw',
+                }}>
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: this.props.left,
+                        right: 0,
+                        bottom: 0,
+                    }}
+                    className={classes.root}>
+                    {images.map(image => (
+                        <ButtonBase
+                            focusRipple
+                            key={image.title}
+                            className={classes.image}
+                            focusVisibleClassName={classes.focusVisible}
+                            style={{
+                                width: '8.7vw',
+                            }}
+                            onClick={() => this.onIconSelect(image.src)}
+                        >
+
+                            <span
+                                className={classes.imageSrc}
+                                style={{
+                                    backgroundImage: `url(${image.src})`,
+                                }}
+                            />
+                            <span className={classes.imageButton}>
+                            </span>
+                        </ButtonBase>
+                    ))}
+                </div>
+=======
             <div className={classes.root}>
                 {images.map(image => (
                     <ButtonBase
@@ -148,6 +198,7 @@ class IconPicker extends Component {
                         </span>
                     </ButtonBase>
                 ))}
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
             </div>
         );
     }
@@ -158,4 +209,8 @@ IconPicker.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
+<<<<<<< HEAD
 export default withStyles(styles)(IconPicker);
+=======
+export default withStyles(styles)(IconPicker);
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d

@@ -60,6 +60,10 @@ class Login extends Component {
         firebase.auth().signInWithEmailAndPassword(email, password).then((u) => {
             console.log(email);
             console.log(password);
+            this.setState({
+               email: email
+            });
+            this.props.onSetUser(email)
         }).catch((error) => {
             alert("Username or Password incorrect")
             console.log(error);
@@ -114,7 +118,7 @@ class Login extends Component {
                                     <AccountCircle />
                                 </Grid>
                                 <Grid item>
-                                    <TextField value={this.state.email} onChange={this.handleChange} name="email" type="email" id="input-with-icon-grid" label="Enter email" />
+                                    <TextField value={this.state.email} onChange={this.handleChange} name="email" type="email" id="input-with-icon-grid" label="อีเมล" />
                                 </Grid>
                             </Grid>
                         </FormGroup>
@@ -124,7 +128,7 @@ class Login extends Component {
                                     <Lock />
                                 </Grid>
                                 <Grid item>
-                                    <TextField value={this.state.password} onChange={this.handleChange} name="password" type="password" id="input-with-icon-grid" label="Enter Password" />
+                                    <TextField value={this.state.password} onChange={this.handleChange} name="password" type="password" id="input-with-icon-grid" label="ป้อนรหัสผ่าน" />
                                 </Grid>
                             </Grid>
                         </FormGroup>
