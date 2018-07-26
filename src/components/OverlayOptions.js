@@ -9,7 +9,15 @@ import IconPicker from './IconPicker';
 
 const styles = theme => ({
     drawerPaper: {
+<<<<<<< HEAD
         zIndex: 0,
+=======
+        position: 'absolute',
+        left: '35vw',
+        right: '35vw',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
     },
 });
 
@@ -33,13 +41,22 @@ class OverlayOptions extends Component {
         const { classes, theme } = this.props;
         const { onChangePolyStrokeColor,
             onChangePolyFillColor,
+<<<<<<< HEAD
             overlayOptionsType,
             onSetSelectedIcon, } = this.props
+=======
+            isOverlayOptionsOpen,
+            overlayOptionsType,
+            onSetSelectedIcon,
+            selectedOverlay,
+        } = this.props
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
         return (
             <Drawer
                 // classes={{
                 //     paper: classes.drawerPaper,
                 // }}
+<<<<<<< HEAD
                 variant="persistent"
                 anchor={'bottom'}
                 open={this.props.openOption}
@@ -52,6 +69,29 @@ class OverlayOptions extends Component {
                         onSetSelectedIcon={onSetSelectedIcon}
                         left={this.props.left}
                     />
+=======
+                width="50%"
+                variant="persistent"
+                anchor={'bottom'}
+                open={isOverlayOptionsOpen}
+            >
+                {overlayOptionsType === 'marker' ?
+                    <div>
+                        <IconPicker
+                            onSetSelectedIcon={onSetSelectedIcon}
+                        />
+
+                        {selectedOverlay !== null ?
+                            <div>
+                                lat : {selectedOverlay.getPosition().lat()}
+                                ,
+                                lng : {selectedOverlay.getPosition().lng()}
+                            </div>
+                            : null
+                        }
+
+                    </div>
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
                     :
                     <ColorPicker
                         onChangePolyStrokeColor={onChangePolyStrokeColor}
@@ -69,4 +109,9 @@ OverlayOptions.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
+<<<<<<< HEAD
 export default withStyles(styles, { withTheme: true })(OverlayOptions);
+=======
+export default withStyles(styles, { withTheme: true })(OverlayOptions);
+
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d

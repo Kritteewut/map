@@ -14,9 +14,16 @@ class Polygon extends Component {
             this.polygon.setMap(null)
         }
     }
+    componentDidUpdate() {
+        if (this.polygon !== false && this.props.isFirstDraw !== true) {
+            this.polygon.setOptions({
+                clickable: true
+            })
+        }
+    }
     redrawPolygon() {
         //var onSquereMetersTrans = this.props.onSquereMetersTrans
-        var {
+        const {
             overlayCoords,
             overlayIndex,
             overlayDrawType,
@@ -34,6 +41,7 @@ class Polygon extends Component {
                 overlayDrawType: overlayDrawType,
                 strokeColor: strokeColor,
                 fillColor: fillColor,
+                clickable: false,
             })
             this.props.addPolygonListener(this.polygon)
         }

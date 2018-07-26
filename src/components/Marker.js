@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import icon_point from './icons/icon_point.png'
+import icon_point from './icons/icon_point.png';
 
 class Marker extends Component {
     constructor(props) {
@@ -19,9 +19,7 @@ class Marker extends Component {
         }
     }
     redrawMarker() {
-        var overlayCoords = this.props.overlayCoords
-        var overlayIndex = this.props.overlayIndex
-        var overlayDrawType = this.props.overlayDrawType
+        const { overlayCoords, overlayIndex, overlayDrawType, icon } = this.props
         if (this.marker === false) {
             this.marker = new window.google.maps.Marker({
                 position: overlayCoords[0],
@@ -29,7 +27,8 @@ class Marker extends Component {
                 map: window.map,
                 overlayType: 'marker',
                 overlayDrawType: overlayDrawType,
-                icon: icon_point,
+                icon: icon,
+                draggable: false
             })
             this.props.addMarkerListener(this.marker)
         }

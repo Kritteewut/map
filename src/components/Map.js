@@ -8,8 +8,13 @@ class MapClass extends Component {
         //this.deleteme = this.deleteme.bind(this)
         this.state = {
             isLoad: false,
+<<<<<<< HEAD
             zoom: 6,
             center: { lat: 13.64216294160931, lng: 100.4371240746384 },
+=======
+            zoom: 15,
+            center: { lat: 13.0003076, lng: 100 },
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
         }
     }
     componentDidMount() {
@@ -25,8 +30,6 @@ class MapClass extends Component {
         this.setState({
             isLoad: true
         })
-        window.google.maps.event.addListener(window.map, 'click', function (event) {
-        })
     }
 
     render() {
@@ -34,8 +37,8 @@ class MapClass extends Component {
         if (this.state.isLoad === true) {
             childrenOutput = this.props.children;
         }
-
         return (
+<<<<<<< HEAD
             <div style={{
                 position: 'absolute',
                 top: 0,
@@ -46,8 +49,21 @@ class MapClass extends Component {
                 
             }}
                 className="Map" id="map" >
+=======
+            <span
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: '25vw',
+                    right: 0,
+                    bottom: 0,
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                }}
+                id="map">
+>>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
                 {childrenOutput}
-            </div>
+            </span>
         );
     }
 }
