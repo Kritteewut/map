@@ -13,11 +13,12 @@ import Pic from './Picture/Ling logo.png';
 import firebase, { auth, provider, provider2 } from '../config/firebase';
 import '../App.css';
 
+const drawerWidth = '25vw'
 
 const styles = theme => ({
     drawerPaper: {
         position: 'relative',
-        width: '25vw',
+        width: drawerWidth,
         zIndex: 1,
     },
 });

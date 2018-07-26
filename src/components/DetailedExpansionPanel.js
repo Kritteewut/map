@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -9,48 +9,54 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
-    root: {
-        position: 'absolute',
-        left: '60vw',
-        right: '15vw',
-        justifyContent: 'flex-end',
-        alignItems: 'center'
+  root: {
+    position: 'absolute',
+    left: '60vw',
+    right: '15vw',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
 
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-    },
-    secondaryHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        color: theme.palette.text.secondary,
-    },
-    details: {
-        alignItems: 'center',
-    },
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(15),
+  },
+  secondaryHeading: {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+  },
+  details: {
+    alignItems: 'center',
+  },
 });
 
-
-function DetailedExpansionPanel(props) {
-    const { classes } = props;
+class DetailedExpansionPanel extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    const { classes } = this.props;
+    const { panelName, panelDetail } = this.props
     return (
-        <div className={classes.root}>
-            <ExpansionPanel >
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <div style={{ alignItems: 'center' }} >
-                        <Typography className={classes.heading}>{props.yourLocation}</Typography>
-                    </div>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.details}>
-                    <Typography>{props.userLocation}</Typography>
-                </ExpansionPanelDetails>
-                <Divider />
-            </ExpansionPanel>
-        </div>
+      <div className={classes.root}>
+        <ExpansionPanel >
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <div style={{ alignItems: 'center' }} >
+              <Typography className={classes.heading}>{panelName}</Typography>
+            </div>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails className={classes.details}>
+            <Typography>{panelDetail}</Typography>
+          </ExpansionPanelDetails>
+          <Divider />
+        </ExpansionPanel>
+      </div>
     );
+  }
 }
 
 DetailedExpansionPanel.propTypes = {
-    classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
 };
-
 export default withStyles(styles)(DetailedExpansionPanel);
