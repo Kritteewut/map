@@ -712,11 +712,9 @@ class App extends Component {
             onPolylineLengthCompute={this.onPolylineLengthCompute}
             strokeColor={this.state.strokeColor}
           />
-          {
             <ExamplePolygon
               examplePolygonCoords={this.state.examplePolygonCoords}
             />
-          }
           <UserLocationMarker
             userLocationCoords={this.state.userLocationCoords}
           />
@@ -767,7 +765,7 @@ class App extends Component {
           onSetSelectedIcon={this.onSetSelectedIcon}
           {...this.state}
         />
-      </div >
+      </div>
     );
   }
 }
