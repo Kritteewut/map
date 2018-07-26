@@ -28,8 +28,8 @@ class Marker extends Component {
                 overlayType: 'marker',
                 overlayDrawType: overlayDrawType,
                 icon: icon,
+                draggable: false
             })
-            console.log(icon_point)
             this.props.addMarkerListener(this.marker)
         }
     }

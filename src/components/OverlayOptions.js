@@ -41,7 +41,9 @@ class OverlayOptions extends Component {
             onChangePolyFillColor,
             isOverlayOptionsOpen,
             overlayOptionsType,
-            onSetSelectedIcon, } = this.props
+            onSetSelectedIcon,
+            selectedOverlay,
+        } = this.props
         return (
             <Drawer
                 // classes={{
@@ -52,9 +54,21 @@ class OverlayOptions extends Component {
                 open={isOverlayOptionsOpen}
             >
                 {overlayOptionsType === 'marker' ?
-                    <IconPicker
-                        onSetSelectedIcon={onSetSelectedIcon}
-                    />
+                    <div>
+                        <IconPicker
+                            onSetSelectedIcon={onSetSelectedIcon}
+                        />
+
+                        {selectedOverlay !== null ?
+                            <div>
+                                lat : {selectedOverlay.getPosition().lat()}
+                                ,
+                                lng : {selectedOverlay.getPosition().lng()}
+                            </div>
+                            : null
+                        }
+
+                    </div>
                     :
                     <ColorPicker
                         onChangePolyStrokeColor={onChangePolyStrokeColor}
