@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import ColorPicker from './ColorPicker';
-import Divider from '@material-ui/core/Divider';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import IconPicker from './IconPicker';
@@ -9,15 +8,7 @@ import IconPicker from './IconPicker';
 
 const styles = theme => ({
     drawerPaper: {
-<<<<<<< HEAD
         zIndex: 0,
-=======
-        position: 'absolute',
-        left: '35vw',
-        right: '35vw',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
     },
 });
 
@@ -38,47 +29,33 @@ class OverlayOptions extends Component {
         })
     }
     render() {
-        const { classes, theme } = this.props;
+        const { classes } = this.props;
         const { onChangePolyStrokeColor,
             onChangePolyFillColor,
-<<<<<<< HEAD
-            overlayOptionsType,
-            onSetSelectedIcon, } = this.props
-=======
             isOverlayOptionsOpen,
             overlayOptionsType,
             onSetSelectedIcon,
             selectedOverlay,
         } = this.props
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
         return (
             <Drawer
                 // classes={{
                 //     paper: classes.drawerPaper,
                 // }}
-<<<<<<< HEAD
+
+                width="50%"
                 variant="persistent"
-                anchor={'bottom'}
-                open={this.props.openOption}
+                anchor={this.props.openOption}
+                open={isOverlayOptionsOpen}
                 classes={{
                     paper: classes.drawerPaper,
                 }}
             >
                 {overlayOptionsType === 'marker' ?
-                    <IconPicker
-                        onSetSelectedIcon={onSetSelectedIcon}
-                        left={this.props.left}
-                    />
-=======
-                width="50%"
-                variant="persistent"
-                anchor={'bottom'}
-                open={isOverlayOptionsOpen}
-            >
-                {overlayOptionsType === 'marker' ?
                     <div>
                         <IconPicker
                             onSetSelectedIcon={onSetSelectedIcon}
+                            left={this.props.left}
                         />
 
                         {selectedOverlay !== null ?
@@ -91,7 +68,6 @@ class OverlayOptions extends Component {
                         }
 
                     </div>
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d
                     :
                     <ColorPicker
                         onChangePolyStrokeColor={onChangePolyStrokeColor}
@@ -109,9 +85,4 @@ OverlayOptions.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 
-<<<<<<< HEAD
 export default withStyles(styles, { withTheme: true })(OverlayOptions);
-=======
-export default withStyles(styles, { withTheme: true })(OverlayOptions);
-
->>>>>>> 5db27ee017713221f27ffc417729c03819caaa0d

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Edit from '@material-ui/icons/Edit';
 
 const styles = theme => ({
@@ -40,7 +39,7 @@ class openSideBtn extends Component {
 
         return (
             <div>
-                {this.props.openOption == false ?
+                {this.props.openOption === false ?
                     <Tooltip title="Open Option" placement="right">
                         <IconButton className={classes.Menu} onClick={this.props.handleOptionOpen} >
                             <Edit />
