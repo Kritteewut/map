@@ -9,11 +9,9 @@ import IconPicker from './IconPicker';
 
 const styles = theme => ({
     drawerPaper: {
-        position: 'relative',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        position: 'absolute',
+        left: '35vw',
+        right: '35vw',
         justifyContent: 'flex-end',
         alignItems: 'center',
     },
@@ -49,6 +47,7 @@ class OverlayOptions extends Component {
                 // classes={{
                 //     paper: classes.drawerPaper,
                 // }}
+                width="50%"
                 variant="persistent"
                 anchor={'bottom'}
                 open={isOverlayOptionsOpen}

@@ -13,6 +13,7 @@ import UserLocationMarker from './components/UserLocationMarker';
 import PermanentDrawer from './components/Navigation'
 import { db } from './config/firebase'
 import OverlayOptions from './components/OverlayOptions';
+import DetailedExpansionPanel from './components/DetailedExpansionPanel'
 import icon_point from './components/icons/icon_point.png';
 import CircleAroundMarker from './components/CircleAroundMarker';
 
@@ -484,13 +485,17 @@ class App extends Component {
     });
   }
   getGeolocation() {
+    var LatLngString = ''
     navigator.geolocation.getCurrentPosition(position => {
       console.log(position.coords)
       window.map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude })
       window.map.setZoom(18)
       window.map.panTo({ lat: position.coords.latitude, lng: position.coords.longitude })
+      LatLngString = 'lattitude : '+position.coords.latitude.toFixed(4) +' , '+'longtitude : '+  position.coords.longitude.toFixed(4)
       this.setState({
-        userLocationCoords: [{ lat: position.coords.latitude, lng: position.coords.longitude }]
+        userLocationCoords: [{ lat: position.coords.latitude, lng: position.coords.longitude }],
+        userLocation: LatLngString,
+        yourLocation: 'Your Location'
       })
     })
   }
@@ -606,12 +611,6 @@ class App extends Component {
           display: 'flex',
         }}
       >
-        <PermanentDrawer
-          planData={this.state.planData}
-          currentPlanData={this.state.currentPlanData}
-          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
-          onSetUser={this.onSetUser}
-        />
         <MapClass>
           {this.state.overlayCoords.map(value => {
             const overlayCoords = value.coords
@@ -692,6 +691,13 @@ class App extends Component {
             onSaveToFirestore={this.onSaveToFirestore}
           />
         </MapClass>
+        <DetailedExpansionPanel userLocation={this.state.userLocation} yourLocation={this.state.yourLocation}/>
+        <PermanentDrawer
+          planData={this.state.planData}
+          currentPlanData={this.state.currentPlanData}
+          onSelectCurrentPlanData={this.onSelectCurrentPlanData}
+          onSetUser={this.onSetUser}
+        />
         <OverlayOptions
           onSetSelectedColor={this.onSetSelectedColor}
           onChangePolyStrokeColor={this.onChangePolyStrokeColor}

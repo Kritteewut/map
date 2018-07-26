@@ -19,7 +19,7 @@ import '../App.css';
 const styles = theme => ({
     drawerPaper: {
         position: 'relative',
-        width: '20vw',
+        width: '25vw',
 
     }, avatar: {
         margin: 0,

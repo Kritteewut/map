@@ -105,7 +105,7 @@ class Login extends Component {
             //loading container wrapper LoginFont
             <div className="loading container wrapper LoginFont">
                 <p class="logo"><img src={logo} className="App-logo" alt="logo" />
-                    <br /> Log In </p>
+                    <br /> Ling Map </p>
                 <div class="inputLogin">
                     <FormControl component="fieldset">
                         <FormGroup>
