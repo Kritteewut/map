@@ -127,43 +127,28 @@ class IconPicker extends Component {
         const { classes } = this.props;
 
         return (
-            <div
-                style={{
-                    height: '8.7vw',
-                }}>
-                <div
+            images.map(image => (
+                <ButtonBase
+                    focusRipple
+                    key={image.title}
+                    className={classes.image}
+                    focusVisibleClassName={classes.focusVisible}
                     style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: this.props.left,
-                        right: 0,
-                        bottom: 0,
+                        width: '8.7vw',
                     }}
-                    className={classes.root}>
-                    {images.map(image => (
-                        <ButtonBase
-                            focusRipple
-                            key={image.title}
-                            className={classes.image}
-                            focusVisibleClassName={classes.focusVisible}
-                            style={{
-                                width: '8.7vw',
-                            }}
-                            onClick={() => this.onIconSelect(image.src)}
-                        >
+                    onClick={() => this.onIconSelect(image.src)}
+                >
 
-                            <span
-                                className={classes.imageSrc}
-                                style={{
-                                    backgroundImage: `url(${image.src})`,
-                                }}
-                            />
-                            <span className={classes.imageButton}>
-                            </span>
-                        </ButtonBase>
-                    ))}
-                </div>
-            </div>
+                    <span
+                        className={classes.imageSrc}
+                        style={{
+                            backgroundImage: `url(${image.src})`,
+                        }}
+                    />
+                    <span className={classes.imageButton}>
+                    </span>
+                </ButtonBase>
+            ))
         );
     }
 }

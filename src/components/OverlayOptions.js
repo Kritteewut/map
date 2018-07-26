@@ -9,12 +9,11 @@ import IconPicker from './IconPicker';
 
 const styles = theme => ({
     drawerPaper: {
-        zIndex: 0,
-        position: 'absolute',
-        left: '35vw',
-        right: '35vw',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
+        drawerPaper: {
+            position: 'relative',
+            width: '25vw',
+            hiegth: '25vw',
+        },
     },
 });
 
@@ -38,22 +37,26 @@ class OverlayOptions extends Component {
         const { classes, theme } = this.props;
         const { onChangePolyStrokeColor,
             onChangePolyFillColor,
-            isOverlayOptionsOpen,
+            openOption,
             overlayOptionsType,
             onSetSelectedIcon,
             selectedOverlay,
         } = this.props
         return (
             <Drawer
-                // classes={{
-                //     paper: classes.drawerPaper,
-                // }}
-                width="50%"
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
                 variant="persistent"
                 anchor={'bottom'}
-                open={isOverlayOptionsOpen}
+                open={openOption}
             >
-                {overlayOptionsType === 'marker' ?
+                <div>
+                    555
+            </div>
+
+                {/*
+                    overlayOptionsType === 'marker' ?
                     <div>
                         <IconPicker
                             onSetSelectedIcon={onSetSelectedIcon}
@@ -63,7 +66,7 @@ class OverlayOptions extends Component {
                             <div>
                                 lat : {selectedOverlay.getPosition().lat()}
                                 ,
-                                lng : {selectedOverlay.getPosition().lng()}
+                            lng : {selectedOverlay.getPosition().lng()}
                             </div>
                             : null
                         }
@@ -73,9 +76,8 @@ class OverlayOptions extends Component {
                     <ColorPicker
                         onChangePolyStrokeColor={onChangePolyStrokeColor}
                         onChangePolyFillColor={onChangePolyFillColor}
-                        left={this.props.left}
                     />
-                }
+                    */ }
             </Drawer>
         )
     }

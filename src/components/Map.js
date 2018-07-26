@@ -33,18 +33,17 @@ class MapClass extends Component {
             childrenOutput = this.props.children;
         }
         return (
-            <div style={{
+            <span style={{
                 position: 'absolute',
                 top: 0,
                 left: this.props.left,
                 right: 0,
                 bottom: this.props.bottom,
                 justifyContent: 'flex-end',
-                
             }}
                 className="Map" id="map" >
                 {childrenOutput}
-            </div>
+            </span>
         );
     }
 }

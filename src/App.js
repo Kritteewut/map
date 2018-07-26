@@ -161,8 +161,7 @@ class App extends Component {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('marker'))) {
       this.onSetMarkerOptions()
-      this.onOverlayOptionsClose()
-      this.onOverlayOptionsOpen()
+      this.handleOptionOpen()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawMarker()
@@ -172,8 +171,7 @@ class App extends Component {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polygon'))) {
       this.onSetPolyOptions()
-      this.onOverlayOptionsClose()
-      this.onOverlayOptionsOpen()
+      this.handleOptionOpen()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolygon()
@@ -182,16 +180,15 @@ class App extends Component {
   onAddListenerPolylineBtn() {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polyline'))) {
-      this.onOverlayOptionsClose()
-      this.onOverlayOptionsOpen()
       this.onSetPolyOptions()
+      this.handleOptionOpen()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolyline()
     }
   }
   onAddListenerGrabBtn() {
-    this.onOverlayOptionsClose()
+    this.handleOptionClose()
     this.onClearSomeMapEventListener()
     this.onUtilitiesMethod()
     this.onSetDragMapCursor()
@@ -712,9 +709,9 @@ class App extends Component {
             onPolylineLengthCompute={this.onPolylineLengthCompute}
             strokeColor={this.state.strokeColor}
           />
-            <ExamplePolygon
-              examplePolygonCoords={this.state.examplePolygonCoords}
-            />
+          <ExamplePolygon
+            examplePolygonCoords={this.state.examplePolygonCoords}
+          />
           <UserLocationMarker
             userLocationCoords={this.state.userLocationCoords}
           />
@@ -733,12 +730,6 @@ class App extends Component {
             openSide={this.state.openSide}
           />
 
-          <OpenOption
-            handleOptionOpen={this.handleOptionOpen}
-            handleOptionClose={this.handleOptionClose}
-            {...this.state}
-          />
-
           <IconLabelButtons
             onAddListenerMarkerBtn={this.onAddListenerMarkerBtn}
             onAddListenerPolygonBtn={this.onAddListenerPolygonBtn}
@@ -746,10 +737,10 @@ class App extends Component {
             onAddListenerGrabBtn={this.onAddListenerGrabBtn}
             onSaveToFirestore={this.onSaveToFirestore}
           />
+          <DetailedExpansionPanel
+            {...this.state}
+          />
         </MapClass>
-        <DetailedExpansionPanel
-          {...this.state}
-        />
         <PermanentDrawer
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
@@ -757,7 +748,6 @@ class App extends Component {
           onSetUser={this.onSetUser}
           {...this.state}
         />
-
         <OverlayOptions
           onSetSelectedColor={this.onSetSelectedColor}
           onChangePolyStrokeColor={this.onChangePolyStrokeColor}
@@ -765,6 +755,7 @@ class App extends Component {
           onSetSelectedIcon={this.onSetSelectedIcon}
           {...this.state}
         />
+
       </div>
     );
   }

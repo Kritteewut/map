@@ -19,7 +19,6 @@ const styles = theme => ({
     drawerPaper: {
         position: 'relative',
         width: drawerWidth,
-        zIndex: 1,
     },
 });
 
