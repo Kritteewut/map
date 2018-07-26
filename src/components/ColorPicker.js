@@ -7,8 +7,7 @@ class ColorPicker extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            pickedColor: '#fff',
-            isVisible: 'none',
+            pickedColor: '#ffffff',
             btnType: 'strokeColor',
         };
         this.handleStrokeColorButtonClick = this.handleStrokeColorButtonClick.bind(this)
@@ -34,36 +33,45 @@ class ColorPicker extends Component {
         this.setState({
             btnType: 'strokeColor',
         })
-        console.log('strokeColor')
     }
     handleFillColorButtonClick() {
         this.setState({
             btnType: 'fillColor',
         })
-        console.log('fillColor')
     }
 
     render() {
         const { pickedColor } = this.state
         return (
 
-            <div>
-                <button
-                    onClick={this.handleStrokeColorButtonClick}
-                >
-                    เปลี่ยนสีเส้น
+            <div style={{
+                height: '8.7vw',
+            }}>
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: this.props.left,
+                    right: 0,
+                    bottom: 0,
+                }}>
+                    <button
+                        onClick={this.handleStrokeColorButtonClick}
+                    >
+                        เปลี่ยนสีเส้น
                     </button>
-                <button
-                    onClick={this.handleFillColorButtonClick}
-                >
-                    เปลี่ยนสีพื้นที่
+                    <button
+                        onClick={this.handleFillColorButtonClick}
+                    >
+                        เปลี่ยนสีพื้นที่
                     </button>
-                <TwitterPicker
-                    triangle={'hide'}
-                    color={pickedColor}
-                    colors={colorArray}
-                    onChangeComplete={this.handleChangeComplete}
-                />
+
+                    <TwitterPicker
+                        triangle={'hide'}
+                        color={pickedColor}
+                        colors={colorArray}
+                        onChangeComplete={this.handleChangeComplete}
+                    />
+                </div>
 
             </div>
         )

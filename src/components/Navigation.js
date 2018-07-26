@@ -6,11 +6,10 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import ColorPicker from '../components/ColorPicker';
 import Login from './Login';
 import Avatar from '@material-ui/core/Avatar';
 import classNames from 'classnames';
-import Pic from './Picture/User-dummy-300x300.png';
+import Pic from './Picture/Ling logo.png';
 import firebase, { auth, provider, provider2 } from '../config/firebase';
 import '../App.css';
 
@@ -20,27 +19,25 @@ const styles = theme => ({
     drawerPaper: {
         position: 'relative',
         width: drawerWidth,
-    }, avatar: {
-        margin: 0,
+        zIndex: 1,
     },
-    card: {
-        maxWidth: 400,
-    },
-
 });
 
 class PermanentDrawer extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            anchor: 'left',
+            email: null,
         }
         this.onSetUser = this.onSetUser.bind(this)
         this.logout = this.logout.bind(this)
     }
 
-    onSetUser(user) {
+    onSetUser(user, email) {
         this.setState({
-            user: user
+            user: user,
+            email: email
         }, () => console.log(this.state.user.uid))
         this.props.onSetUser(user)
     }
@@ -56,16 +53,14 @@ class PermanentDrawer extends Component {
             return (
                 <div>
                     {this.state.user ?
-                        <div className={classes.userName}>
-                            <ListItem>
-                                <Avatar
-                                    alt={this.state.user.email}
-                                    src={this.state.user.photoURL || Pic}
-                                    className={classNames(classes.bigAvatar)}
-                                />
-                                <ListItemText primary={this.state.user.email} secondary={this.props.currentDate} />
-                            </ListItem>
-                        </div>
+                        <ListItem>
+                            <Avatar
+                                alt={this.state.user.email}
+                                src={this.state.user.photoURL || Pic}
+                                className={classNames(classes.bigAvatar)}
+                            />
+                            <ListItemText primary={this.state.user.email || this.state.email} secondary={this.state.user.displayName} />
+                        </ListItem>
                         :
                         <Avatar
                             alt="No User"
@@ -120,20 +115,19 @@ class PermanentDrawer extends Component {
 
     render() {
         const { classes } = this.props;
+        const { anchor } = this.state;
         return (
-            <div
-
-            >
+            <div>
                 <Drawer
-                    variant="permanent"
+                    variant="persistent"
+                    anchor={anchor}
+                    open={this.props.openSide}
                     classes={{
                         paper: classes.drawerPaper,
                     }}
-                    anchor={'left'}
                 >
                     {this.renderDrawer()}
                 </Drawer>
-
             </div>
 
 

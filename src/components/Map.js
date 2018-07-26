@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../App.css';
+
 class MapClass extends Component {
     constructor(props) {
         super(props);
@@ -8,8 +8,8 @@ class MapClass extends Component {
         //this.deleteme = this.deleteme.bind(this)
         this.state = {
             isLoad: false,
-            zoom: 15,
-            center: { lat: 13.0003076, lng: 96.992706 },
+            zoom: 6,
+            center: { lat: 13.64216294160931, lng: 100.4371240746384 },
         }
     }
     componentDidMount() {
@@ -36,17 +36,16 @@ class MapClass extends Component {
         }
 
         return (
-            <div
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    justifyContent: 'flex-end',
-                    alignItems: 'center',
-                }}
-                id="map">
+            <div style={{
+                position: 'absolute',
+                top: 0,
+                left: this.props.left,
+                right: 0,
+                bottom: this.props.bottom,
+                justifyContent: 'flex-end',
+                
+            }}
+                className="Map" id="map" >
                 {childrenOutput}
             </div>
         );

@@ -36,7 +36,6 @@ class Polygon extends Component {
                 fillColor: fillColor,
             })
             this.props.addPolygonListener(this.polygon)
-            console.log(this.polygon)
         }
         else {
             if (overlayCoords.length > 0) {

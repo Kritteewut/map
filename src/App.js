@@ -14,6 +14,10 @@ import PermanentDrawer from './components/Navigation'
 import Login from './components/Login';
 import { db } from './config/firebase'
 import OverlayOptions from './components/OverlayOptions';
+import OpenSide from './components/openSideBtn';
+import OpenOption from './components/openOption'
+import icon_point from './components/icons/icon_point.png';
+import DetailedExpansionPanel from './components/DetailedExpansionPanel'
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
 
@@ -65,8 +69,13 @@ class App extends Component {
       strokeColor: '#FF4500',
       user: null,
       selectedColor: '',
-      user: null,
-      currentDate: new Date(),
+      openSide: false,
+      openOption: false,
+      left: '0vw',
+      bottom: '0vw',
+      isOverlayOptionsOpen: false,
+      overlayOptionsType: '',
+      icon: icon_point,
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
@@ -84,7 +93,11 @@ class App extends Component {
     this.onSetUser = this.onSetUser.bind(this)
     this.onChangePolyStrokeColor = this.onChangePolyStrokeColor.bind(this)
     this.onChangePolyFillColor = this.onChangePolyFillColor.bind(this)
-
+    this.handleDrawerOpen = this.handleDrawerOpen.bind(this)
+    this.handleDrawerClose = this.handleDrawerClose.bind(this)
+    this.handleOptionOpen = this.handleOptionOpen.bind(this)
+    this.handleOptionClose = this.handleOptionClose.bind(this)
+    this.onSetSelectedIcon = this.onSetSelectedIcon.bind(this)
   }
   componentDidMount() {
     this.onQueryPlanFromFirestore()
@@ -143,6 +156,9 @@ class App extends Component {
   onAddListenerMarkerBtn() {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('marker'))) {
+      this.onSetMarkerOptions()
+      this.onOverlayOptionsClose()
+      this.onOverlayOptionsOpen()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawMarker()
@@ -151,6 +167,9 @@ class App extends Component {
   onAddListenerPolygonBtn() {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polygon'))) {
+      this.onSetPolyOptions()
+      this.onOverlayOptionsClose()
+      this.onOverlayOptionsOpen()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolygon()
@@ -159,12 +178,16 @@ class App extends Component {
   onAddListenerPolylineBtn() {
     this.onUtilitiesMethod()
     if (!(this.onBtnTypeChange('polyline'))) {
+      this.onOverlayOptionsClose()
+      this.onOverlayOptionsOpen()
+      this.onSetPolyOptions()
       this.onClearSomeMapEventListener()
       this.onSetDrawingCursor()
       this.drawPolyline()
     }
   }
   onAddListenerGrabBtn() {
+    this.onOverlayOptionsClose()
     this.onClearSomeMapEventListener()
     this.onUtilitiesMethod()
     this.onSetDragMapCursor()
@@ -175,14 +198,15 @@ class App extends Component {
   drawMarker() {
     var self = this
     window.google.maps.event.addListener(window.map, 'click', function (event) {
-      let { overlayIndex, isFirstDraw, overlayCoords } = self.state
+      let { overlayIndex, isFirstDraw, overlayCoords, icon } = self.state
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
       if (isFirstDraw === true) {
         overlayCoords.push({
           coords: [{ lat, lng }],
           overlayIndex, overlayType: 'marker',
-          overlayDrawType: 'draw'
+          overlayDrawType: 'draw',
+          icon: icon,
         })
       }
       self.setState({
@@ -264,52 +288,40 @@ class App extends Component {
   onSetSelectOverlay(overlay) {
     this.onResetSelectedOverlay()
     if (overlay.overlayType === 'polygon' || overlay.overlayType === 'polyline') {
-      overlay.setOptions({
-        editable: true,
-      })
-      this.setState({
-        selectedOverlay: overlay
-      })
+      overlay.setOptions({ editable: true, })
+      this.setState({ selectedOverlay: overlay })
     }
     if (overlay.overlayType === 'marker') {
-      overlay.setOptions({
-        draggable: true,
-      })
-      this.setState({
-        selectedOverlay: overlay
-      })
+      overlay.setOptions({ draggable: true, })
+      this.setState({ selectedOverlay: overlay })
     }
   }
   onResetSelectedOverlay() {
     const { selectedOverlay } = this.state
     if (selectedOverlay !== null) {
       if (selectedOverlay.overlayType === 'polygon' || selectedOverlay.overlayType === 'polyline') {
-        selectedOverlay.setOptions({
-          editable: false,
-        })
-        this.setState({
-          selectedOverlay: null
-        })
+        selectedOverlay.setOptions({ editable: false, })
+        this.setState({ selectedOverlay: null })
       }
       if (selectedOverlay.overlayType === 'marker') {
-        selectedOverlay.setOptions({
-          draggable: false,
-        })
-        this.setState({
-          selectedOverlay: null
-        })
+        selectedOverlay.setOptions({ draggable: false, })
+        this.setState({ selectedOverlay: null })
       }
     }
   }
   addMarkerListener(marker) {
     var self = this
     window.google.maps.event.addListener(marker, 'click', function () {
+      self.onSetMarkerOptions()
+      self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(marker)
     })
   }
   addPolygonListener(polygon) {
     var self = this
     window.google.maps.event.addListener(polygon, 'click', function () {
+      self.onSetPolyOptions()
+      self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(polygon)
     })
     window.google.maps.event.addListener(polygon, 'mouseup', function (event) {
@@ -321,6 +333,8 @@ class App extends Component {
   addPolylineListener(polyline) {
     var self = this
     window.google.maps.event.addListener(polyline, 'click', function () {
+      self.onSetPolyOptions()
+      self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(polyline)
     })
     window.google.maps.event.addListener(polyline, 'mouseup', function (event) {
@@ -550,11 +564,64 @@ class App extends Component {
       fillColor: color
     }, () => console.log(fillColor))
   }
-  onSetUser(user) {
+  onSetUser(user, email) {
     this.setState({
-      user: user
+      user: user,
+      email: email
     }, () => console.log(this.state.user.uid))
   }
+
+  onOverlayOptionsOpen() {
+    this.setState({ isOverlayOptionsOpen: true })
+  }
+  onOverlayOptionsClose() {
+    this.setState({ isOverlayOptionsOpen: false })
+  }
+  onSetMarkerOptions() {
+    this.setState({ overlayOptionsType: 'marker' })
+  }
+  onSetPolyOptions() {
+    this.setState({ overlayOptionsType: 'poly' })
+  }
+  onSetSelectedIcon(icon) {
+    var { selectedOverlay, overlayCoords } = this.state
+    if (selectedOverlay) {
+      selectedOverlay.setOptions({ icon: icon })
+      let markerIndex = selectedOverlay.overlayIndex
+      let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === markerIndex)
+      overlayCoords[overlayIndex].icon = icon
+      this.setState({ overlayCoords })
+    }
+    this.setState({ icon: icon })
+  }
+
+  handleDrawerOpen = () => {
+    this.setState({
+      openSide: true,
+      left: '25vw',
+    });
+  };
+
+  handleDrawerClose = () => {
+    this.setState({
+      openSide: false,
+      left: '0vw',
+    });
+  };
+
+  handleOptionOpen = () => {
+    this.setState({
+      openOption: true,
+      bottom: '8.7vw',
+    });
+  };
+
+  handleOptionClose = () => {
+    this.setState({
+      openOption: false,
+      bottom: '0vw',
+    });
+  };
 
   //this is rederrrrr
   render() {
@@ -578,7 +645,10 @@ class App extends Component {
           alignItems: 'center',
         }}
       >
-        <MapClass>
+        <MapClass
+          left={this.state.left}
+          bottom={this.state.bottom}
+        >
           {this.state.overlayCoords.map(value => {
             const overlayCoords = value.coords
             const overlayIndex = value.overlayIndex
@@ -645,8 +715,21 @@ class App extends Component {
           <GeolocatedMe
             getGeolocation={this.getGeolocation}
           />
+
           <NiceModal
             onAddPlan={this.onAddPlan}
+          />
+
+          <OpenSide
+            handleDrawerOpen={this.handleDrawerOpen}
+            handleDrawerClose={this.handleDrawerClose}
+            openSide={this.state.openSide}
+          />
+
+          <OpenOption
+            handleOptionOpen={this.handleOptionOpen}
+            handleOptionClose={this.handleOptionClose}
+            {...this.state}
           />
 
           <IconLabelButtons
@@ -658,16 +741,21 @@ class App extends Component {
           />
 
         </MapClass>
-        <Login
+
+        <PermanentDrawer
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
           onSelectCurrentPlanData={this.onSelectCurrentPlanData}
           onSetUser={this.onSetUser}
+          {...this.state}
         />
+
         <OverlayOptions
           onSetSelectedColor={this.onSetSelectedColor}
           onChangePolyStrokeColor={this.onChangePolyStrokeColor}
           onChangePolyFillColor={this.onChangePolyFillColor}
+          onSetSelectedIcon={this.onSetSelectedIcon}
+          {...this.state}
         />
       </div>
     );
