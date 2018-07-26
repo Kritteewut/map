@@ -197,7 +197,8 @@ class App extends Component {
       if (isFirstDraw === true) {
         overlayCoords.push({
           coords: [{ lat, lng }],
-          overlayIndex, overlayType: 'marker',
+          overlayIndex,
+          overlayType: 'marker',
           overlayDrawType: 'draw',
           icon: icon,
         })
@@ -471,7 +472,7 @@ class App extends Component {
       window.map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude })
       window.map.setZoom(18)
       window.map.panTo({ lat: position.coords.latitude, lng: position.coords.longitude })
-      LatLngString = 'lattitude : '+position.coords.latitude.toFixed(4) +' , '+'longtitude : '+  position.coords.longitude.toFixed(4)
+      LatLngString = 'lattitude : ' + position.coords.latitude.toFixed(4) + ' , ' + 'longtitude : ' + position.coords.longitude.toFixed(4)
       this.setState({
         userLocationCoords: [{ lat: position.coords.latitude, lng: position.coords.longitude }],
         userLocation: LatLngString,
@@ -610,6 +611,7 @@ class App extends Component {
                   strokeColor={strokeColor}
                   addPolygonListener={this.addPolygonListener}
                   onSquereMetersTrans={this.onSquereMetersTrans}
+                  isFirstDraw={this.state.isFirstDraw}
                 />
               )
             }
@@ -671,7 +673,7 @@ class App extends Component {
             onSaveToFirestore={this.onSaveToFirestore}
           />
         </MapClass>
-        <DetailedExpansionPanel userLocation={this.state.userLocation} yourLocation={this.state.yourLocation}/>
+        <DetailedExpansionPanel userLocation={this.state.userLocation} yourLocation={this.state.yourLocation} />
         <PermanentDrawer
           planData={this.state.planData}
           currentPlanData={this.state.currentPlanData}
