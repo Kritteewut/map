@@ -35,12 +35,14 @@ class MapClass extends Component {
         }
         return (
             <span style={{
+                
                 position: 'absolute',
                 top: 0,
                 left: this.props.left,
                 right: 0,
                 bottom: this.props.bottom,
                 justifyContent: 'flex-end',
+                transition: '350ms cubic-bezier(0.23, 1, 0.32, 1)',
             }}
                 className="Map" id="map" >
                 {childrenOutput}

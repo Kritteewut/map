@@ -61,7 +61,6 @@ class OverlayOptions extends Component {
                         <IconPicker
                             onSetSelectedIcon={onSetSelectedIcon}
                         />
-
                         {selectedOverlay !== null ?
                             <div>
                                 lat : {selectedOverlay.getPosition().lat()}
@@ -70,7 +69,6 @@ class OverlayOptions extends Component {
                             </div>
                             : null
                         }
-
                     </div>
                     :
                     <ColorPicker
@@ -89,4 +87,3 @@ OverlayOptions.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(OverlayOptions);
-

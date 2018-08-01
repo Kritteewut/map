@@ -10,9 +10,10 @@ import Divider from '@material-ui/core/Divider';
 
 const styles = theme => ({
   root: {
-    position: 'absolute',
-    left: '60vw',
-    right: '15vw',
+    position: 'relative',
+    width: '400px',
+    left: '500px',
+    right: '300px',
     justifyContent: 'flex-end',
     alignItems: 'center'
 

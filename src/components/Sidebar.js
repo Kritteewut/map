@@ -5,13 +5,8 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-<<<<<<< HEAD
-import Login from './Login';
-
-=======
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
->>>>>>> 26537cb807a40d78b016c16fb24dcb941757c684
 const styles = {
     list: {
         width: '27vw',
@@ -40,9 +35,6 @@ class Sidebar extends Component {
 
         const sideList = (
             <div className={classes.list}>
-<<<<<<< HEAD
-                <Login/>
-=======
                 <List>
                     User info
                 </List>
@@ -58,24 +50,17 @@ class Sidebar extends Component {
                         </ListItem>
                     )
                 })}
->>>>>>> 26537cb807a40d78b016c16fb24dcb941757c684
             </div>
         );
         return (
             <div>
                 <Button variant="contained" color="primary" className={classes.button} onClick={this.toggleDrawer('left', true)} style={{ margin: '100px 0px 0px 10px' }} >Plan: {this.props.currentPlanData.planName}</Button>
                 <SwipeableDrawer
-<<<<<<< HEAD
-                    open='left'
-                    // onClose={this.toggleDrawer('left', false)}
-                    // onOpen={this.toggleDrawer('left', true)}
-=======
                     open={true}
                     shadow={false}
                     onClose={this.toggleDrawer('left', false)}
                     onOpen={this.toggleDrawer('left', true)}
 
->>>>>>> 26537cb807a40d78b016c16fb24dcb941757c684
                 >
                     <div
                         tabIndex={0}
