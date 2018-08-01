@@ -28,7 +28,7 @@ class Marker extends Component {
                 overlayType: 'marker',
                 overlayDrawType: overlayDrawType,
                 icon: icon,
-                draggable: false
+                draggable: false,
             })
             this.props.addMarkerListener(this.marker)
         }
