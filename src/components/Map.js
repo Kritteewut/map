@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+
 class MapClass extends Component {
     constructor(props) {
         super(props);
@@ -12,7 +13,7 @@ class MapClass extends Component {
             center: { lat: 13.0003076, lng: 100 },
         }
     }
-    componentDidMount() {
+    componentWillMount() {
         window.initMap = this.initMap
     }
     initMap() {

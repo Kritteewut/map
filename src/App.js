@@ -17,7 +17,8 @@ import OpenSide from './components/openSideBtn';
 import OpenOption from './components/openOption'
 import icon_point from './components/icons/icon_point.png';
 import DetailedExpansionPanel from './components/DetailedExpansionPanel'
-import CircleAroundMarker from './components/CircleAroundMarker';
+import TransparentMaker from './components/TransparentMaker';
+
 
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
@@ -37,8 +38,10 @@ function new_script(src) {
 };
 
 // Promise Interface can ensure load the script only once
-var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places&key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&callback=initMap&v=3.32');
+var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places,visualization&key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&callback=initMap&v=3.32');
 var my_script2 = new_script('https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.0.2/jsts.min.js')
+var my_script3 = new_script('https://googlemaps.github.io/js-map-label/src/maplabel-compiled.js')
+
 
 class App extends Component {
   static async getInitialProps(props) {
@@ -55,7 +58,7 @@ class App extends Component {
     this.state = {
       status: 'start',
       btnTypeCheck: '',
-      overlayCoords: [],
+      overlayObject: [],
       overlayIndex: 0,
       selectedOverlay: null,
       isFirstDraw: true,
@@ -80,6 +83,8 @@ class App extends Component {
       circleAroundMarkerCoords: [],
       panelName: '',
       panelDetail: '',
+      distanceBTW: null,
+      middlePoint: [],
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
@@ -88,7 +93,6 @@ class App extends Component {
     this.addMarkerListener = this.addMarkerListener.bind(this)
     this.addPolygonListener = this.addPolygonListener.bind(this)
     this.addPolylineListener = this.addPolylineListener.bind(this)
-    this.onPolylineLengthCompute = this.onPolylineLengthCompute.bind(this)
     this.onSquereMetersTrans = this.onSquereMetersTrans.bind(this)
     this.onAddPlan = this.onAddPlan.bind(this)
     this.getGeolocation = this.getGeolocation.bind(this)
@@ -108,14 +112,14 @@ class App extends Component {
   }
   do_load = () => {
     var self = this;
-
     my_script.then(function () {
       self.setState({ 'status': 'done' });
     }).catch(function () {
       self.setState({ 'status': 'error' });
     })
     my_script2.then(function () {
-
+    })
+    my_script3.then(function () {
     })
   }
   onBtnTypeChange(type) {
@@ -135,16 +139,16 @@ class App extends Component {
     window.google.maps.event.clearListeners(window.map, 'mousemove')
   }
   onUtilitiesMethod() {
-    const { isFirstDraw, overlayCoords } = this.state
+    const { isFirstDraw, overlayObject } = this.state
     if (isFirstDraw === false) {
-      const currentOvrelay = overlayCoords[overlayCoords.length - 1]
+      const currentOvrelay = overlayObject[overlayObject.length - 1]
       const coordsLength = currentOvrelay.coords.length
       if (currentOvrelay.overlayType === 'polygon' && coordsLength < 3) {
-        overlayCoords.splice(overlayCoords.length - 1, 1)
+        overlayObject.splice(overlayObject.length - 1, 1)
         alert('รูปหลายเหลี่ยมที่มีจำนวนจุดมากกว่าสองจุดเท่านั้นจึงจะถูกบันทึกได้')
       }
       if (currentOvrelay.overlayType === 'polyline' && coordsLength < 2) {
-        overlayCoords.splice(overlayCoords.length - 1, 1)
+        overlayObject.splice(overlayObject.length - 1, 1)
         alert('เส้นเชื่อมที่มีจำนวนจุดมากหนึ่งจุดเท่านั้นจึงจะถูกบันทึกได้')
       }
       this.setState((prevState) => {
@@ -152,7 +156,7 @@ class App extends Component {
           overlayIndex: prevState.overlayIndex + 1,
           isFirstDraw: true
         };
-      }, () => console.log(this.state.overlayCoords, 'overlayCoords'));
+      }, () => console.log(this.state.overlayObject, 'overlayCoords'));
     }
     this.onExampleLineReset()
     this.onResetSelectedOverlay()
@@ -199,11 +203,11 @@ class App extends Component {
   drawMarker() {
     var self = this
     window.google.maps.event.addListener(window.map, 'click', function (event) {
-      let { overlayIndex, isFirstDraw, overlayCoords, icon } = self.state
+      let { overlayIndex, isFirstDraw, overlayObject, icon } = self.state
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
       if (isFirstDraw === true) {
-        overlayCoords.push({
+        overlayObject.push({
           coords: [{ lat, lng }],
           overlayIndex,
           overlayType: 'marker',
@@ -212,7 +216,7 @@ class App extends Component {
         })
       }
       self.setState({
-        overlayCoords,
+        overlayObject,
         btnTypeCheck: '',
         isFirstDraw: false,
       }, () => {
@@ -226,8 +230,8 @@ class App extends Component {
       let lat = event.latLng.lat()
       let lng = event.latLng.lng()
       if (self.state.isFirstDraw === true) {
-        let { overlayIndex, overlayCoords, strokeColor } = self.state
-        overlayCoords.push({
+        let { overlayIndex, overlayObject, strokeColor } = self.state
+        overlayObject.push({
           coords: [{ lat, lng }],
           overlayIndex,
           overlayType: 'polyline',
@@ -237,13 +241,14 @@ class App extends Component {
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
-          overlayCoords,
+          overlayObject,
         })
         self.onDrawExampleLine(event)
       } else {
-        let { overlayCoords } = self.state
-        overlayCoords[overlayCoords.length - 1].coords.push({ lat, lng })
-        self.setState({ overlayCoords })
+        let { overlayObject } = self.state
+        overlayObject[overlayObject.length - 1].coords.push({ lat, lng })
+        self.onPolyLengthComputeForCoords(overlayObject[overlayObject.length - 1])
+        self.setState({ overlayObject })
         self.onDrawExampleLine(event)
       }
     })
@@ -255,8 +260,8 @@ class App extends Component {
       let lng = event.latLng.lng()
 
       if (self.state.isFirstDraw === true) {
-        let { overlayIndex, overlayCoords, fillColor, strokeColor, } = self.state
-        overlayCoords.push({
+        let { overlayIndex, overlayObject, fillColor, strokeColor, } = self.state
+        overlayObject.push({
           coords: [{ lat, lng }],
           overlayIndex,
           overlayType: 'polygon',
@@ -267,15 +272,14 @@ class App extends Component {
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
-          overlayCoords,
+          overlayObject,
         })
-        //self.onDrawExamplePolygon(overlayCoords[overlayCoords.length - 1].coords)
         self.onDrawExampleLine(event)
       } else {
-        let { overlayCoords } = self.state
-        overlayCoords[overlayCoords.length - 1].coords.push({ lat, lng })
-        self.setState({ overlayCoords })
-        //self.onDrawExamplePolygon(overlayCoords[overlayCoords.length - 1].coords)
+        let { overlayObject } = self.state
+        overlayObject[overlayObject.length - 1].coords.push({ lat, lng })
+        self.onPolyLengthComputeForCoords(overlayObject[overlayObject.length - 1])
+        self.setState({ overlayObject })
         self.onDrawExampleLine(event)
       }
     })
@@ -319,14 +323,14 @@ class App extends Component {
       self.setState({ selectedOverlay: marker })
     })
     window.google.maps.event.addListener(marker, 'dragend', function () {
-      let overlayCoords = self.state.overlayCoords
+      let overlayCoords = self.state.overlayObject
       let markerIndex = marker.overlayIndex
       let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === markerIndex)
       let editCoords = []
       editCoords = [{ lat: marker.getPosition().lat(), lng: marker.getPosition().lng() }]
       overlayCoords[overlayIndex].coords = editCoords
       self.setState({ overlayCoords })
-      console.log(self.state.overlayCoords[overlayIndex], 'ediited coords')
+      console.log(self.state.overlayObject[overlayIndex], 'ediited coords')
     })
   }
   addPolygonListener(polygon) {
@@ -335,6 +339,7 @@ class App extends Component {
       self.onSetPolyOptions()
       self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(polygon)
+      self.onPolyLengthComputeForOverlay(polygon)
     })
     window.google.maps.event.addListener(polygon, 'mouseup', function (event) {
       if (event.vertex !== undefined || event.edge !== undefined) {
@@ -348,6 +353,7 @@ class App extends Component {
       self.onSetPolyOptions()
       self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(polyline)
+      self.onPolyLengthComputeForOverlay(polyline)
     })
     window.google.maps.event.addListener(polyline, 'mouseup', function (event) {
       if (event.vertex !== undefined || event.edge !== undefined) {
@@ -381,7 +387,7 @@ class App extends Component {
     //})
   }
   onPolyCoordsEdit(polygon) {
-    let overlayCoords = this.state.overlayCoords
+    let overlayCoords = this.state.overlayObject
     let polyIndex = polygon.overlayIndex
     let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
     let editCoords = []
@@ -392,7 +398,7 @@ class App extends Component {
     })
     overlayCoords[overlayIndex].coords = editCoords
     this.setState({ overlayCoords })
-    console.log(this.state.overlayCoords[overlayIndex], 'ediited coords')
+    console.log(this.state.overlayObject[overlayIndex], 'ediited coords')
   }
   onMarkerCoordsEdit(marker) {
 
@@ -403,9 +409,40 @@ class App extends Component {
   onSetDragMapCursor() {
     window.map.setOptions({ draggableCursor: null, draggingCursor: null })
   }
-  onPolylineLengthCompute = (polyline) => {
-    var length = window.google.maps.geometry.spherical.computeLength(polyline.getPath())
-    return console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
+  onPolyLengthComputeForCoords(overlayObject) {
+    if (overlayObject.overlayType === 'polygon') {
+      let polyCom = new window.google.maps.Polyline({ path: overlayObject.coords })
+      let length = window.google.maps.geometry.spherical.computeLength(polyCom.getPath())
+      if (overlayObject.coords.length > 2) {
+        let end = new window.google.maps.LatLng(overlayObject.coords[overlayObject.coords.length - 1]);
+        let start = new window.google.maps.LatLng(overlayObject.coords[0]);
+        let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(end, start)
+        length += endTostartDis
+      }
+      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
+    }
+    if (overlayObject.overlayType === 'polyline') {
+      let polyCom = new window.google.maps.Polyline({ path: overlayObject.coords })
+      let length = window.google.maps.geometry.spherical.computeLength(polyCom.getPath())
+      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
+    }
+  }
+  onPolyLengthComputeForOverlay(poly) {
+    if (poly.overlayType === 'polygon') {
+      let length = window.google.maps.geometry.spherical.computeLength(poly.getPath())
+      let end = poly.getPath().getAt(poly.getPath().getLength() - 1)
+      let start = poly.getPath().getAt(0)
+      let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(start, end)
+      length += endTostartDis
+      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
+    }
+    if (poly.overlayType === 'polyline') {
+      let length = window.google.maps.geometry.spherical.computeLength(poly.getPath())
+      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
+    }
+  }
+  onComputeDistanceBetween(poly) {
+    window.google.maps.geometry.spherical.computeDistanceBetween(poly)
   }
   onSquereMetersTrans(polygon) {
     var area = window.google.maps.geometry.spherical.computeArea(polygon.getPath())
@@ -429,7 +466,7 @@ class App extends Component {
   }
   onSaveToFirestore() {
     let self = this
-    let overlayCoords = this.state.overlayCoords
+    let overlayCoords = this.state.overlayObject
     overlayCoords.map(value => {
       // add coords array to cloud firestore
       if (value.overlayDrawType === 'draw') {
@@ -455,7 +492,7 @@ class App extends Component {
     let planId = self.state.currentPlanData.planId
     this.setState({ overlayCoords: [] })
     shapesRef.where('planId', '==', planId).get().then(function (querySnapshot) {
-      let overlayCoords = self.state.overlayCoords
+      let overlayCoords = self.state.overlayObject
       querySnapshot.forEach(function (doc) {
         let coords = doc.data().coords
         let overlayIndex = doc.id
@@ -542,28 +579,28 @@ class App extends Component {
     }
   }
   onChangePolyStrokeColor(color) {
-    var { selectedOverlay, overlayCoords } = this.state
+    var { selectedOverlay, overlayObject } = this.state
     if (selectedOverlay !== null) {
       selectedOverlay.setOptions({
         strokeColor: color
       })
       let polyIndex = selectedOverlay.overlayIndex
-      let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
-      overlayCoords[overlayIndex].strokeColor = color
-      this.setState({ overlayCoords })
+      let overlayIndex = overlayObject.findIndex(overlay => overlay.overlayIndex === polyIndex)
+      overlayObject[overlayIndex].strokeColor = color
+      this.setState({ overlayObject })
     }
     this.setState({
       strokeColor: color
     })
   }
   onChangePolyFillColor(color) {
-    var { selectedOverlay, overlayCoords } = this.state
+    var { selectedOverlay, overlayObject } = this.state
     if (selectedOverlay) {
       selectedOverlay.setOptions({ fillColor: color })
       let polyIndex = selectedOverlay.overlayIndex
-      let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === polyIndex)
-      overlayCoords[overlayIndex].fillColor = color
-      this.setState({ overlayCoords })
+      let overlayIndex = overlayObject.findIndex(overlay => overlay.overlayIndex === polyIndex)
+      overlayObject[overlayIndex].fillColor = color
+      this.setState({ overlayObject })
     }
     this.setState({ fillColor: color })
   }
@@ -587,13 +624,13 @@ class App extends Component {
     this.setState({ overlayOptionsType: 'poly' })
   }
   onSetSelectedIcon(icon) {
-    var { selectedOverlay, overlayCoords } = this.state
+    var { selectedOverlay, overlayObject } = this.state
     if (selectedOverlay) {
       selectedOverlay.setOptions({ icon: icon })
       let markerIndex = selectedOverlay.overlayIndex
-      let overlayIndex = overlayCoords.findIndex(overlay => overlay.overlayIndex === markerIndex)
-      overlayCoords[overlayIndex].icon = icon
-      this.setState({ overlayCoords })
+      let overlayIndex = overlayObject.findIndex(overlay => overlay.overlayIndex === markerIndex)
+      overlayObject[overlayIndex].icon = icon
+      this.setState({ overlayObject })
     }
     this.setState({ icon: icon })
   }
@@ -649,7 +686,7 @@ class App extends Component {
           left={this.state.left}
           bottom={this.state.bottom}
         >
-          {this.state.overlayCoords.map(value => {
+          {this.state.overlayObject.map(value => {
             const overlayCoords = value.coords
             const overlayIndex = value.overlayIndex
             const overlayDrawType = value.overlayDrawType
@@ -666,23 +703,23 @@ class App extends Component {
                   fillColor={fillColor}
                   strokeColor={strokeColor}
                   addPolygonListener={this.addPolygonListener}
-                  onSquereMetersTrans={this.onSquereMetersTrans}
                   isFirstDraw={this.state.isFirstDraw}
                 />
               )
             }
             if (value.overlayType === 'polyline') {
               return (
-                <Polyline
-                  key={overlayIndex}
-                  overlayCoords={overlayCoords}
-                  overlayIndex={overlayIndex}
-                  overlayDrawType={overlayDrawType}
-                  strokeColor={strokeColor}
-                  addPolylineListener={this.addPolylineListener}
-                  onPolylineLengthCompute={this.onPolylineLengthCompute}
-                  isFirstDraw={this.state.isFirstDraw}
-                />
+                <div>
+                  <Polyline
+                    key={overlayIndex}
+                    overlayCoords={overlayCoords}
+                    overlayIndex={overlayIndex}
+                    overlayDrawType={overlayDrawType}
+                    strokeColor={strokeColor}
+                    addPolylineListener={this.addPolylineListener}
+                    isFirstDraw={this.state.isFirstDraw}
+                  />
+                </div>
               )
             }
             if (value.overlayType === 'marker') {
@@ -706,7 +743,7 @@ class App extends Component {
           />
           <ExampleLine
             exampleLineCoords={this.state.exampleLineCoords}
-            onPolylineLengthCompute={this.onPolylineLengthCompute}
+            onPolylineLengthCompute={this.onPolyLengthCompute}
             strokeColor={this.state.strokeColor}
           />
           <ExamplePolygon
@@ -723,7 +760,9 @@ class App extends Component {
           <NiceModal
             onAddPlan={this.onAddPlan}
           />
-
+          <TransparentMaker
+            {...this.state}
+          />
           <OpenSide
             handleDrawerOpen={this.handleDrawerOpen}
             handleDrawerClose={this.handleDrawerClose}
