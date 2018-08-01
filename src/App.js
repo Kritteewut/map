@@ -38,7 +38,7 @@ function new_script(src) {
 };
 
 // Promise Interface can ensure load the script only once
-var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places,visualization&key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&callback=initMap&v=3.32');
+var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places,visualization&key=&callback=initMap&v=3.32');
 var my_script2 = new_script('https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.0.2/jsts.min.js')
 var my_script3 = new_script('https://googlemaps.github.io/js-map-label/src/maplabel-compiled.js')
 
@@ -83,8 +83,7 @@ class App extends Component {
       circleAroundMarkerCoords: [],
       panelName: '',
       panelDetail: '',
-      distanceBTW: null,
-      middlePoint: [],
+      distanceDetail: [],
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
     this.onAddListenerPolygonBtn = this.onAddListenerPolygonBtn.bind(this)
@@ -139,16 +138,18 @@ class App extends Component {
     window.google.maps.event.clearListeners(window.map, 'mousemove')
   }
   onUtilitiesMethod() {
-    const { isFirstDraw, overlayObject } = this.state
+    const { isFirstDraw, overlayObject, distanceDetail } = this.state
     if (isFirstDraw === false) {
       const currentOvrelay = overlayObject[overlayObject.length - 1]
       const coordsLength = currentOvrelay.coords.length
       if (currentOvrelay.overlayType === 'polygon' && coordsLength < 3) {
         overlayObject.splice(overlayObject.length - 1, 1)
+        distanceDetail.splice(distanceDetail.length - 1, 1)
         alert('รูปหลายเหลี่ยมที่มีจำนวนจุดมากกว่าสองจุดเท่านั้นจึงจะถูกบันทึกได้')
       }
       if (currentOvrelay.overlayType === 'polyline' && coordsLength < 2) {
         overlayObject.splice(overlayObject.length - 1, 1)
+        distanceDetail.splice(distanceDetail.length - 1, 1)
         alert('เส้นเชื่อมที่มีจำนวนจุดมากหนึ่งจุดเท่านั้นจึงจะถูกบันทึกได้')
       }
       this.setState((prevState) => {
@@ -238,18 +239,20 @@ class App extends Component {
           overlayDrawType: 'draw',
           strokeColor: strokeColor,
         })
+        self.onDrawExampleLine(event)
+        self.onPolydistanceBtwCompute()
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
           overlayObject,
         })
-        self.onDrawExampleLine(event)
       } else {
         let { overlayObject } = self.state
         overlayObject[overlayObject.length - 1].coords.push({ lat, lng })
-        self.onPolyLengthComputeForCoords(overlayObject[overlayObject.length - 1])
+        self.onPolyLengthComputeForCoords()
         self.setState({ overlayObject })
         self.onDrawExampleLine(event)
+        self.onPolydistanceBtwCompute()
       }
     })
   }
@@ -269,18 +272,20 @@ class App extends Component {
           fillColor: fillColor,
           strokeColor: strokeColor,
         })
+        self.onDrawExampleLine(event)
+        self.onPolydistanceBtwCompute()
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
           overlayObject,
         })
-        self.onDrawExampleLine(event)
       } else {
         let { overlayObject } = self.state
         overlayObject[overlayObject.length - 1].coords.push({ lat, lng })
-        self.onPolyLengthComputeForCoords(overlayObject[overlayObject.length - 1])
+        self.onPolyLengthComputeForCoords()
         self.setState({ overlayObject })
         self.onDrawExampleLine(event)
+        self.onPolydistanceBtwCompute()
       }
     })
   }
@@ -409,24 +414,63 @@ class App extends Component {
   onSetDragMapCursor() {
     window.map.setOptions({ draggableCursor: null, draggingCursor: null })
   }
-  onPolyLengthComputeForCoords(overlayObject) {
-    if (overlayObject.overlayType === 'polygon') {
-      let polyCom = new window.google.maps.Polyline({ path: overlayObject.coords })
-      let length = window.google.maps.geometry.spherical.computeLength(polyCom.getPath())
-      if (overlayObject.coords.length > 2) {
-        let end = new window.google.maps.LatLng(overlayObject.coords[overlayObject.coords.length - 1]);
-        let start = new window.google.maps.LatLng(overlayObject.coords[0]);
-        let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(end, start)
-        length += endTostartDis
-      }
-      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
+  onPolyLengthComputeForCoords() {
+    var { overlayObject } = this.state
+    var currentObject = overlayObject[overlayObject.length - 1]
+    var currentCoords = currentObject.coords
+    var endPoint = currentCoords[currentCoords.length - 1]
+    var startPoint = currentCoords[0]
+
+    var endLatLng = new window.google.maps.LatLng(endPoint);
+    var startLatLng = new window.google.maps.LatLng(startPoint);
+
+    var polyCom = new window.google.maps.Polyline({ path: currentCoords })
+    var sumLength = window.google.maps.geometry.spherical.computeLength(polyCom.getPath())
+
+    if (currentObject.overlayType === 'polygon' && currentCoords.length > 2) {
+      let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng)
+      sumLength += endTostartDis
     }
-    if (overlayObject.overlayType === 'polyline') {
-      let polyCom = new window.google.maps.Polyline({ path: overlayObject.coords })
-      let length = window.google.maps.geometry.spherical.computeLength(polyCom.getPath())
-      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
-    }
+    console.log('ความยาวรวม', sumLength.toFixed(3), 'เมตร')
+
   }
+  onPolydistanceBtwCompute() {
+    var { overlayObject, distanceDetail, isFirstDraw } = this.state
+    var currentObject = overlayObject[overlayObject.length - 1]
+    var currentCoords = currentObject.coords
+    var endPoint = currentCoords[currentCoords.length - 1]
+    var startPoint = currentCoords[0]
+    var prevEndPoint = currentCoords[currentCoords.length - 2]
+
+    var currentDetial = distanceDetail[distanceDetail.length - 1]
+
+    var endLatLng = new window.google.maps.LatLng(endPoint);
+    var startLatLng = new window.google.maps.LatLng(startPoint);
+    var prevEndLatLng = new window.google.maps.LatLng(prevEndPoint);
+    if (isFirstDraw === true) {
+      distanceDetail.push({ detail: [] })
+    } else {
+      currentDetial.detail.push({
+        midpoint: { lat: (endPoint.lat + prevEndPoint.lat) / 2.000008, lng: (endPoint.lng + prevEndPoint.lng) / 2 },
+        disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, prevEndLatLng)
+      })
+    }
+    if (currentObject.overlayType === 'polygon' && currentCoords.length > 2) {
+      if (currentCoords.length > 3) {
+        // var willCut = currentDetial.detail[currentDetial.detail.length - 2]
+        // var index = currentDetial.detail.indexOf(willCut)
+        // currentDetial.detail.splice(index, 1)
+        // console.log(currentDetial, 'cut')
+      }
+      let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng)
+      currentDetial.detail.push({
+        midpoint: { lat: (endPoint.lat + startPoint.lat) / 2, lng: (endPoint.lng + startPoint.lng) / 2 },
+        disBtw: endTostartDis
+      })
+    }
+    this.setState({ distanceDetail }, () => console.log(distanceDetail))
+  }
+
   onPolyLengthComputeForOverlay(poly) {
     if (poly.overlayType === 'polygon') {
       let length = window.google.maps.geometry.spherical.computeLength(poly.getPath())
@@ -440,9 +484,6 @@ class App extends Component {
       let length = window.google.maps.geometry.spherical.computeLength(poly.getPath())
       console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
     }
-  }
-  onComputeDistanceBetween(poly) {
-    window.google.maps.geometry.spherical.computeDistanceBetween(poly)
   }
   onSquereMetersTrans(polygon) {
     var area = window.google.maps.geometry.spherical.computeArea(polygon.getPath())
@@ -687,6 +728,7 @@ class App extends Component {
           bottom={this.state.bottom}
         >
           {this.state.overlayObject.map(value => {
+
             const overlayCoords = value.coords
             const overlayIndex = value.overlayIndex
             const overlayDrawType = value.overlayDrawType
@@ -741,11 +783,13 @@ class App extends Component {
           <SearchBox
             status={this.state.status}
           />
+
           <ExampleLine
             exampleLineCoords={this.state.exampleLineCoords}
             onPolylineLengthCompute={this.onPolyLengthCompute}
             strokeColor={this.state.strokeColor}
           />
+
           <ExamplePolygon
             examplePolygonCoords={this.state.examplePolygonCoords}
           />
@@ -760,9 +804,19 @@ class App extends Component {
           <NiceModal
             onAddPlan={this.onAddPlan}
           />
-          <TransparentMaker
-            {...this.state}
-          />
+          {this.state.distanceDetail.map(value => {
+            return (
+              value.detail.map(value2 => {
+                return (
+                  <TransparentMaker
+                    midpoint={value2.midpoint}
+                    disBtw={value2.disBtw}
+                  />
+                )
+              })
+            )
+          })
+          }
           <OpenSide
             handleDrawerOpen={this.handleDrawerOpen}
             handleDrawerClose={this.handleDrawerClose}
