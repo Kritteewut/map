@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import transparent_icon from './icons/transparent_icon.png';
 
+
 class TransparentMaker extends Component {
     constructor(props) {
         super(props);
@@ -10,25 +11,27 @@ class TransparentMaker extends Component {
 
         //this.deleteme = this.deleteme.bind(this)
     }
+    componentWillUnmount() {
+        if (this.transparentMaker !== false) {
+            this.transparentMaker.setMap(null)
+        }
+    }
     redrawTransparentMaker() {
-        const { overlayCoords } = this.props
-        
+        const { midpoint, disBtw } = this.props
         if (this.transparentMaker === false) {
-            var length = overlayCoords.length
             this.transparentMaker = new window.google.maps.Marker({
-                position: overlayCoords[length - 1],
+                position: midpoint,
                 map: window.map,
                 icon: transparent_icon,
-                clickable: false,
+                //clickable: false,
                 label: {
-                    text: 'ขึ้นเถอะ',
-                    color: 'black',
-                    //fontFamily:,
+                    text: disBtw.toFixed(3) + ' m',
+                    //color: 'black',
+                    fontFamily: 'Vast Shadow',
                     fontSize: '17px',
-                    //fontWeight:,
+                    fontWeight: 'Lightest',
                 },
             })
-            console.log('create',overlayCoords[length - 1])
         }
     }
     render() {
