@@ -23,9 +23,7 @@ class UserLocationMarker extends Component {
                 animation: window.google.maps.Animation.BOUNCE
             })
             addUserMarkerListener(this.userLocationMarker)
-            console.log('create')
         }
-
     }
 
     render() {

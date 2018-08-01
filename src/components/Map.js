@@ -22,6 +22,9 @@ class MapClass extends Component {
             center: self.state.center,
             zoom: self.state.zoom,
             clickableIcons: false,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false,
         })
         this.setState({
             isLoad: true
@@ -35,7 +38,7 @@ class MapClass extends Component {
         }
         return (
             <span style={{
-                
+
                 position: 'absolute',
                 top: 0,
                 left: this.props.left,

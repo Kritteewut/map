@@ -28,7 +28,7 @@ class TransparentMaker extends Component {
                     text: disBtw.toFixed(3) + ' m',
                     //color: 'black',
                     fontFamily: 'Vast Shadow',
-                    fontSize: '17px',
+                    fontSize: '16px',
                     fontWeight: 'Lightest',
                 },
             })

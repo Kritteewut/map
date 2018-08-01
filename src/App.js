@@ -106,7 +106,7 @@ class App extends Component {
     this.onSetSelectedIcon = this.onSetSelectedIcon.bind(this)
     this.addUserMarkerListener = this.addUserMarkerListener.bind(this)
 
-    
+
   }
   componentDidMount() {
     this.onQueryPlanFromFirestore()
@@ -242,7 +242,7 @@ class App extends Component {
           strokeColor: strokeColor,
         })
         self.onDrawExampleLine(event)
-        self.onPolydistanceBtwCompute()
+        self.onPolydistanceBtwComputeForCoords()
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
@@ -254,7 +254,7 @@ class App extends Component {
         self.onPolyLengthComputeForCoords()
         self.setState({ overlayObject })
         self.onDrawExampleLine(event)
-        self.onPolydistanceBtwCompute()
+        self.onPolydistanceBtwComputeForCoords()
       }
     })
   }
@@ -275,7 +275,7 @@ class App extends Component {
           strokeColor: strokeColor,
         })
         self.onDrawExampleLine(event)
-        self.onPolydistanceBtwCompute()
+        self.onPolydistanceBtwComputeForCoords()
         self.setState({
           isFirstDraw: false,
           btnTypeCheck: '',
@@ -287,7 +287,7 @@ class App extends Component {
         self.onPolyLengthComputeForCoords()
         self.setState({ overlayObject })
         self.onDrawExampleLine(event)
-        self.onPolydistanceBtwCompute()
+        self.onPolydistanceBtwComputeForCoords()
       }
     })
   }
@@ -346,11 +346,13 @@ class App extends Component {
       self.onSetPolyOptions()
       self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(polygon)
-      self.onPolyLengthComputeForOverlay(polygon)
+      self.onPolyLengthComputeForOverlay()
     })
     window.google.maps.event.addListener(polygon, 'mouseup', function (event) {
       if (event.vertex !== undefined || event.edge !== undefined) {
         self.onPolyCoordsEdit(polygon)
+        self.onPolyLengthComputeForOverlay()
+        self.onPolydistanceBtwComputeForOverlay()
       }
     })
   }
@@ -360,11 +362,13 @@ class App extends Component {
       self.onSetPolyOptions()
       self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(polyline)
-      self.onPolyLengthComputeForOverlay(polyline)
+      self.onPolyLengthComputeForOverlay()
     })
     window.google.maps.event.addListener(polyline, 'mouseup', function (event) {
       if (event.vertex !== undefined || event.edge !== undefined) {
         self.onPolyCoordsEdit(polyline)
+        self.onPolyLengthComputeForOverlay()
+        self.onPolydistanceBtwComputeForOverlay()
       }
     })
   }
@@ -436,8 +440,8 @@ class App extends Component {
     console.log('ความยาวรวม', sumLength.toFixed(3), 'เมตร')
 
   }
-  onPolydistanceBtwCompute() {
-    var { overlayObject, distanceDetail, isFirstDraw } = this.state
+  onPolydistanceBtwComputeForCoords() {
+    var { overlayObject, distanceDetail, isFirstDraw, overlayIndex } = this.state
     var currentObject = overlayObject[overlayObject.length - 1]
     var currentCoords = currentObject.coords
     var endPoint = currentCoords[currentCoords.length - 1]
@@ -450,19 +454,19 @@ class App extends Component {
     var startLatLng = new window.google.maps.LatLng(startPoint);
     var prevEndLatLng = new window.google.maps.LatLng(prevEndPoint);
     if (isFirstDraw === true) {
-      distanceDetail.push({ detail: [] })
+      distanceDetail.push({ detail: [], overlayIndex })
     } else {
       currentDetial.detail.push({
         midpoint: { lat: (endPoint.lat + prevEndPoint.lat) / 2.000008, lng: (endPoint.lng + prevEndPoint.lng) / 2 },
-        disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, prevEndLatLng)
+        disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, prevEndLatLng),
       })
     }
     if (currentObject.overlayType === 'polygon' && currentCoords.length > 2) {
       if (currentCoords.length > 3) {
-        // var willCut = currentDetial.detail[currentDetial.detail.length - 2]
+        var willCut = currentDetial.detail[currentDetial.detail.length - 2]
         // var index = currentDetial.detail.indexOf(willCut)
         // currentDetial.detail.splice(index, 1)
-        // console.log(currentDetial, 'cut')
+        console.log(willCut, 'cut')
       }
       let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng)
       currentDetial.detail.push({
@@ -473,19 +477,24 @@ class App extends Component {
     this.setState({ distanceDetail }, () => console.log(distanceDetail))
   }
 
-  onPolyLengthComputeForOverlay(poly) {
-    if (poly.overlayType === 'polygon') {
-      let length = window.google.maps.geometry.spherical.computeLength(poly.getPath())
-      let end = poly.getPath().getAt(poly.getPath().getLength() - 1)
-      let start = poly.getPath().getAt(0)
+  onPolyLengthComputeForOverlay() {
+    var { selectedOverlay } = this.state
+    let sumLength = window.google.maps.geometry.spherical.computeLength(selectedOverlay.getPath())
+    if (selectedOverlay.overlayType === 'polygon') {
+      let end = selectedOverlay.getPath().getAt(selectedOverlay.getPath().getLength() - 1)
+      let start = selectedOverlay.getPath().getAt(0)
       let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(start, end)
-      length += endTostartDis
-      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
+      sumLength += endTostartDis
+
     }
-    if (poly.overlayType === 'polyline') {
-      let length = window.google.maps.geometry.spherical.computeLength(poly.getPath())
-      console.log('ความยาวรวม', length.toFixed(3), 'เมตร')
-    }
+    console.log('ความยาวรวม', sumLength.toFixed(3), 'เมตร')
+  }
+  onPolydistanceBtwComputeForOverlay() {
+    var { distanceDetail, selectedOverlay, } = this.state
+    var overlayIndex = selectedOverlay.overlayIndex
+    var detailIndex = distanceDetail.findIndex(detail => detail.overlayIndex === overlayIndex)
+    distanceDetail.splice(detailIndex, 1)
+    this.setState({ distanceDetail })
   }
   onSquereMetersTrans(polygon) {
     var area = window.google.maps.geometry.spherical.computeArea(polygon.getPath())
@@ -809,7 +818,7 @@ class App extends Component {
             return (
               <UserLocationMarker
                 userLocationCoords={value}
-                addUserMarkerListener = {this.addUserMarkerListener}
+                addUserMarkerListener={this.addUserMarkerListener}
               />
             )
           })
