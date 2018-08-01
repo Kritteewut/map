@@ -601,7 +601,7 @@ class App extends Component {
   handleDrawerOpen = () => {
     this.setState({
       openSide: true,
-      left: '25vw',
+      left: '350px',
     });
   };
 

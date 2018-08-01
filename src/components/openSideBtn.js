@@ -39,7 +39,7 @@ class openSideBtn extends Component {
 
         return (
             <div >
-                {this.props.openSide == false ?
+                {this.props.openSide === false ?
                     <Tooltip title="Open Side" placement="right">
                         <IconButton className={classes.Menu} onClick={this.props.handleDrawerOpen} >
                             <MenuIcon />
