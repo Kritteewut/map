@@ -104,7 +104,9 @@ class App extends Component {
     this.handleDrawerClose = this.handleDrawerClose.bind(this)
     this.handleOptionOpen = this.handleOptionOpen.bind(this)
     this.onSetSelectedIcon = this.onSetSelectedIcon.bind(this)
+    this.addUserMarkerListener = this.addUserMarkerListener.bind(this)
 
+    
   }
   componentDidMount() {
     this.onQueryPlanFromFirestore()
@@ -580,6 +582,15 @@ class App extends Component {
       })
     })
   }
+  onSetMapNullUserMaker() {
+    this.setState({ userLocationCoords: [] })
+  }
+  addUserMarkerListener(marker) {
+    var self = this
+    window.google.maps.event.addListener(marker, 'click', function () {
+      self.onSetMapNullUserMaker()
+    })
+  }
   onQueryPlanFromFirestore() {
     // get all plan list from frirestore filter by user ID
     this.setState({
@@ -793,10 +804,16 @@ class App extends Component {
           <ExamplePolygon
             examplePolygonCoords={this.state.examplePolygonCoords}
           />
-          <UserLocationMarker
-            userLocationCoords={this.state.userLocationCoords}
-          />
 
+          {this.state.userLocationCoords.map(value => {
+            return (
+              <UserLocationMarker
+                userLocationCoords={value}
+                addUserMarkerListener = {this.addUserMarkerListener}
+              />
+            )
+          })
+          }
           <GeolocatedMe
             getGeolocation={this.getGeolocation}
           />

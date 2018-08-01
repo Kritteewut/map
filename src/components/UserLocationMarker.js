@@ -8,28 +8,24 @@ class UserLocationMarker extends Component {
         this.RedrawUserLocationMarker = this.RedrawUserLocationMarker.bind(this)
         //this. = this..bind(this)
     }
+    componentWillUnmount() {
+        if (this.userLocationMarker !== false) {
+            this.userLocationMarker.setMap(null)
+        }
+    }
     RedrawUserLocationMarker() {
         var self = this
-        var userLocationCoords = this.props.userLocationCoords
+        var { userLocationCoords,addUserMarkerListener } = this.props
         if (this.userLocationMarker === false) {
             this.userLocationMarker = new window.google.maps.Marker({
+                position: userLocationCoords,
                 map: window.map,
                 animation: window.google.maps.Animation.BOUNCE
             })
-            window.google.maps.event.addListener(this.userLocationMarker, 'click', function () {
-                self.userLocationMarker.setOptions({
-                    visible: false
-                })
-            })
-        } else {
-            if (userLocationCoords.length > 0) {
-                this.userLocationMarker.setOptions({
-                    position: userLocationCoords[0],
-                    visible: true,
-                    animation: window.google.maps.Animation.BOUNCE,
-                })
-            }
+            addUserMarkerListener(this.userLocationMarker)
+            console.log('create')
         }
+
     }
 
     render() {
