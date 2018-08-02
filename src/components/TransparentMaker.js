@@ -23,13 +23,13 @@ class TransparentMaker extends Component {
                 position: midpoint,
                 map: window.map,
                 icon: transparent_icon,
-                //clickable: false,
+                clickable: false,
                 label: {
                     text: disBtw.toFixed(3) + ' m',
                     //color: 'black',
                     fontFamily: 'Vast Shadow',
-                    fontSize: '16px',
-                    fontWeight: 'Lightest',
+                    fontSize: '15px',
+                    //fontWeight: 'Lightest',
                 },
             })
         }
