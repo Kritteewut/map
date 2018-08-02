@@ -22,7 +22,7 @@ import TransparentMaker from './components/TransparentMaker';
 
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
-var shortid = require('shortid');
+var shortid = require('shortid'); //shortid.generate(), -> generate id 
 
 function new_script(src) {
   return new Promise(function (resolve, reject) {
@@ -61,8 +61,8 @@ class App extends Component {
       overlayObject: [],
       overlayIndex: 0,
       selectedOverlay: null,
-      exampleLineCoords: [],
       isFirstDraw: true,
+      exampleLineCoords: [],
       examplePolygonCoords: [],
       userLocationCoords: [],
       planData: [],
@@ -120,10 +120,6 @@ class App extends Component {
     })
     my_script2.then(function () {
     })
-<<<<<<< HEAD
-=======
-  
->>>>>>> 3b213b53b476ae87d46c1c98c27241d0058e18a5
   }
   onBtnTypeChange(type) {
     if (this.state.btnTypeCheck === type) {
@@ -783,7 +779,6 @@ class App extends Component {
           display: 'flex',
         }}
       >
-      <input id="pac-input" class="controls" type="text" placeholder="Find place"/>
         <MapClass
           left={this.state.left}
           bottom={this.state.bottom}
