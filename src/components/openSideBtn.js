@@ -19,38 +19,27 @@ const styles = theme => ({
 class openSideBtn extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-        }
+        this.state = {}
         //this.deleteme = this.deleteme.bind(this)
     }
 
 
     render() {
         const { classes } = this.props;
-        // var self = this;
-        // if (self.props.status === 'done') {
-        //   if (self.state.isRender === false) {
-        //     self.state.isRender = true;
-        //     setTimeout(function () {
-        //       self.renderControl()
-        //     }, 0);
-        //   }
-        // }
+
 
         return (
             <div >
                 {this.props.openSide === false ?
-                    <Tooltip title="Open Side" placement="right">
-                        <IconButton className={classes.Menu} onClick={this.props.handleDrawerOpen} >
-                            <MenuIcon />
-                        </IconButton>
-                    </Tooltip>
+                    <IconButton className={classes.Menu} onClick={this.props.handleDrawerOpen} >
+                        <MenuIcon />
+                    </IconButton>
+
                     :
-                    <Tooltip title="Closed Side" placement="right">
-                        <IconButton className={classes.Menu} onClick={this.props.handleDrawerClose} >
-                            <MenuIcon />
-                        </IconButton>
-                    </Tooltip>}
+                    <IconButton className={classes.Menu} onClick={this.props.handleDrawerClose} >
+                        <MenuIcon />
+                    </IconButton>
+                }
             </div>
         )
     }

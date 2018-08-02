@@ -26,15 +26,6 @@ class GeolocatedMe extends Component {
 
     render() {
         const { classes } = this.props;
-        // var self = this;
-        // if (self.props.status === 'done') {
-        //   if (self.state.isRender === false) {
-        //     self.state.isRender = true;
-        //     setTimeout(function () {
-        //       self.renderControl()
-        //     }, 0);
-        //   }
-        // }
         return (
             <div>
                 <Tooltip title="Your Location" placement="right">
