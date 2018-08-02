@@ -14,28 +14,32 @@ const styles = theme => ({
         position: 'absolute',
         bottom: theme.spacing.unit * 59,
         right: theme.spacing.unit,
+        width: '125px'
     },
     buttonPoint: {
         position: 'absolute',
         bottom: theme.spacing.unit * 51,
         right: theme.spacing.unit,
+        width: '125px'
     },
     buttonLine: {
         position: 'absolute',
         bottom: theme.spacing.unit * 44,
         right: theme.spacing.unit,
-
+        width: '125px'
 
     },
     buttonPolygon: {
         position: 'absolute',
         bottom: theme.spacing.unit * 37,
         right: theme.spacing.unit,
+        width: '125px'
     },
     buttonMarker: {
         position: 'absolute',
         bottom: theme.spacing.unit * 30,
         right: theme.spacing.unit,
+        width: '125px'
     },
     leftIcon: {
         marginRight: theme.spacing.unit,
