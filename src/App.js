@@ -61,8 +61,8 @@ class App extends Component {
       overlayObject: [],
       overlayIndex: 0,
       selectedOverlay: null,
-      isFirstDraw: true,
       exampleLineCoords: [],
+      isFirstDraw: true,
       examplePolygonCoords: [],
       userLocationCoords: [],
       polylineLength: 0,
@@ -769,6 +769,7 @@ class App extends Component {
           display: 'flex',
         }}
       >
+      <input id="pac-input" class="controls" type="text" placeholder="Find place"/>
         <MapClass
           left={this.state.left}
           bottom={this.state.bottom}
