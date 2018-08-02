@@ -40,17 +40,17 @@ class openSideBtn extends Component {
         return (
             <div >
                 {this.props.openSide === false ?
-                    <Tooltip title="Open Side" placement="right">
-                        <IconButton className={classes.Menu} onClick={this.props.handleDrawerOpen} >
-                            <MenuIcon />
-                        </IconButton>
-                    </Tooltip>
+
+                    <IconButton className={classes.Menu} onClick={this.props.handleDrawerOpen} >
+                        <MenuIcon />
+                    </IconButton>
+
                     :
-                    <Tooltip title="Closed Side" placement="right">
-                        <IconButton className={classes.Menu} onClick={this.props.handleDrawerClose} >
-                            <MenuIcon />
-                        </IconButton>
-                    </Tooltip>}
+
+                    <IconButton className={classes.Menu} onClick={this.props.handleDrawerClose} >
+                        <MenuIcon />
+                    </IconButton>
+                }
             </div>
         )
     }
