@@ -40,7 +40,6 @@ function new_script(src) {
 // Promise Interface can ensure load the script only once
 var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places,visualization&key=&callback=initMap&v=3.32');
 var my_script2 = new_script('https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.0.2/jsts.min.js')
-var my_script3 = new_script('https://googlemaps.github.io/js-map-label/src/maplabel-compiled.js')
 
 
 class App extends Component {
@@ -120,8 +119,7 @@ class App extends Component {
     })
     my_script2.then(function () {
     })
-    my_script3.then(function () {
-    })
+  
   }
   onBtnTypeChange(type) {
     if (this.state.btnTypeCheck === type) {
