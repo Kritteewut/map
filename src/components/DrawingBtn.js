@@ -14,28 +14,32 @@ const styles = theme => ({
         position: 'absolute',
         bottom: theme.spacing.unit * 59,
         right: theme.spacing.unit,
+        width: '125px'
     },
     buttonPoint: {
         position: 'absolute',
         bottom: theme.spacing.unit * 51,
         right: theme.spacing.unit,
+        width: '125px'
     },
     buttonLine: {
         position: 'absolute',
         bottom: theme.spacing.unit * 44,
         right: theme.spacing.unit,
-
+        width: '125px'
 
     },
     buttonPolygon: {
         position: 'absolute',
         bottom: theme.spacing.unit * 37,
         right: theme.spacing.unit,
+        width: '125px'
     },
     buttonMarker: {
         position: 'absolute',
         bottom: theme.spacing.unit * 30,
         right: theme.spacing.unit,
+        width: '125px'
     },
     leftIcon: {
         marginRight: theme.spacing.unit,
@@ -52,14 +56,14 @@ function IconLabelButtons(props) {
     const { classes } = props;
     return (
         <div>
-            <Button variant="contained" color="secondary" className={classes.buttonGrab}
+            <Button variant="contained" color="default" className={classes.buttonGrab}
                 onClick={() => props.onAddListenerGrabBtn()}
             >
                 <DeleteIcon className={classes.leftIcon} />
                 Grab
 
       </Button>
-            <Button variant="contained" color="primary" className={classes.buttonPoint}
+            <Button variant="contained" color="default" className={classes.buttonPoint}
                 onClick={() => props.onAddListenerMarkerBtn()}
             >
                 <SendIcon className={classes.leftIcon} />
@@ -72,12 +76,12 @@ function IconLabelButtons(props) {
                 Polyline
 
       </Button>
-            <Button variant="contained" color="secondary" className={classes.buttonPolygon}
+            <Button variant="contained" color="default" className={classes.buttonPolygon}
                 onClick={() => props.onAddListenerPolygonBtn()}>
                 <KeyboardVoiceICon className={classes.leftIcon} />
                 Polygon
       </Button>
-            <Button variant="contained" className={classes.buttonMarker}
+            <Button variant="contained" color="primary" className={classes.buttonMarker}
                 onClick={() => props.onSaveToFirestore()}>
                 <Place className={classes.leftIcon} />
                 Marker
