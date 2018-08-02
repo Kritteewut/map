@@ -59,7 +59,7 @@ class SearchBox extends Component {
         // Create a marker for each place.
         this.markers.push(new window.google.maps.Marker({
           map: window.map,
-          icon: icon,
+          // icon: icon,
           title: place.name,
           position: place.geometry.location
         }));
