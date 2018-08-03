@@ -779,6 +779,7 @@ class App extends Component {
           display: 'flex',
         }}
       >
+      <input id="pac-input" class="controls" type="text" placeholder="Find place"/>>
         <MapClass
           left={this.state.left}
           bottom={this.state.bottom}

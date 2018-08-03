@@ -31,19 +31,11 @@ class openSideBtn extends Component {
         return (
             <div >
                 {this.props.openSide === false ?
-<<<<<<< HEAD
-=======
-
->>>>>>> 3b213b53b476ae87d46c1c98c27241d0058e18a5
                     <IconButton className={classes.Menu} onClick={this.props.handleDrawerOpen} >
                         <MenuIcon />
                     </IconButton>
 
                     :
-<<<<<<< HEAD
-=======
-
->>>>>>> 3b213b53b476ae87d46c1c98c27241d0058e18a5
                     <IconButton className={classes.Menu} onClick={this.props.handleDrawerClose} >
                         <MenuIcon />
                     </IconButton>

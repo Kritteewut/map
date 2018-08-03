@@ -117,7 +117,7 @@ class SimpleModal extends React.Component {
 
                         <Tooltip title="Add Plan" placement="top" >
                             <Button className={classes.absolute3} onClick={this.handleAdd}>
-                                +
+                                Add
                             </Button>
                         </Tooltip>
                         <input className={classes.absolute4} value={this.state.inputValue} onChange={evt => this.updateInputValue(evt)} />
