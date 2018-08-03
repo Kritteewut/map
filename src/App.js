@@ -22,6 +22,7 @@ import TransparentMaker from './components/TransparentMaker';
 
 const shapesRef = db.collection('shapes')
 const planRef = db.collection('plan')
+var shortid = require('shortid'); //shortid.generate(), -> generate id 
 
 function new_script(src) {
   return new Promise(function (resolve, reject) {
@@ -40,19 +41,18 @@ function new_script(src) {
 // Promise Interface can ensure load the script only once
 var my_script = new_script('https://maps.googleapis.com/maps/api/js?&libraries=geometry,drawing,places,visualization&key=&callback=initMap&v=3.32');
 var my_script2 = new_script('https://cdn.rawgit.com/bjornharrtell/jsts/gh-pages/1.0.2/jsts.min.js')
-var my_script3 = new_script('https://googlemaps.github.io/js-map-label/src/maplabel-compiled.js')
 
 
 class App extends Component {
-  static async getInitialProps(props) {
-    return console.log('get init!', props)
-    // auth.onAuthStateChanged((user) => {
-    //     if (user) {
-    //         this.setState({ user });
-    //         console.log(user)
-    //     }
-    // });
-  }
+  //static async getInitialProps(props) {
+  //return console.log('get init!', props)
+  // auth.onAuthStateChanged((user) => {
+  //     if (user) {
+  //         this.setState({ user });
+  //         console.log(user)
+  //     }
+  // });
+  //}
   constructor(props) {
     super(props)
     this.state = {
@@ -61,11 +61,10 @@ class App extends Component {
       overlayObject: [],
       overlayIndex: 0,
       selectedOverlay: null,
-      exampleLineCoords: [],
       isFirstDraw: true,
+      exampleLineCoords: [],
       examplePolygonCoords: [],
       userLocationCoords: [],
-      polylineLength: 0,
       planData: [],
       currentPlanData: [],
       fillColor: '#ffa500',
@@ -82,7 +81,10 @@ class App extends Component {
       currentDate: new Date(),
       circleAroundMarkerCoords: [],
       panelName: '',
-      panelDetail: '',
+      latLngDetail: '',
+      lengthDetail: '',
+      disBtwDetail: '',
+      areaDetail: '',
       distanceDetail: [],
     }
     this.onAddListenerMarkerBtn = this.onAddListenerMarkerBtn.bind(this)
@@ -92,7 +94,6 @@ class App extends Component {
     this.addMarkerListener = this.addMarkerListener.bind(this)
     this.addPolygonListener = this.addPolygonListener.bind(this)
     this.addPolylineListener = this.addPolylineListener.bind(this)
-    this.onSquereMetersTrans = this.onSquereMetersTrans.bind(this)
     this.onAddPlan = this.onAddPlan.bind(this)
     this.getGeolocation = this.getGeolocation.bind(this)
     this.onSelectCurrentPlanData = this.onSelectCurrentPlanData.bind(this)
@@ -105,7 +106,6 @@ class App extends Component {
     this.handleOptionOpen = this.handleOptionOpen.bind(this)
     this.onSetSelectedIcon = this.onSetSelectedIcon.bind(this)
     this.addUserMarkerListener = this.addUserMarkerListener.bind(this)
-
 
   }
   componentDidMount() {
@@ -120,24 +120,27 @@ class App extends Component {
     })
     my_script2.then(function () {
     })
-    my_script3.then(function () {
-    })
   }
   onBtnTypeChange(type) {
     if (this.state.btnTypeCheck === type) {
       return true
     } else {
-      this.setState({ btnTypeCheck: type })
+      this.setState({ btnTypeCheck: type, panelName: type })
     }
   }
   onExampleLineReset() {
-    this.setState({
-      exampleLineCoords: []
-    })
+    this.setState({ exampleLineCoords: [] })
   }
   onClearSomeMapEventListener() {
     window.google.maps.event.clearListeners(window.map, 'click')
     window.google.maps.event.clearListeners(window.map, 'mousemove')
+  }
+  addMouseMoveOnMap() {
+    var self = this
+    window.google.maps.event.addListener(window.map, 'mousemove', function (event) {
+      var LatLngString = 'lattitude : ' + event.latLng.lat().toFixed(4) + ' , ' + 'longtitude : ' + event.latLng.lng().toFixed(4)
+      self.setState({ latLngDetail: LatLngString })
+    })
   }
   onUtilitiesMethod() {
     const { isFirstDraw, overlayObject, distanceDetail } = this.state
@@ -157,12 +160,22 @@ class App extends Component {
       this.setState((prevState) => {
         return {
           overlayIndex: prevState.overlayIndex + 1,
-          isFirstDraw: true
+          isFirstDraw: true,
+          overlayObject,
+          distanceDetail,
         };
-      }, () => console.log(this.state.overlayObject, 'overlayCoords'));
+      }, () => console.log(overlayObject, 'object'));
     }
     this.onExampleLineReset()
     this.onResetSelectedOverlay()
+  }
+  onResetDetail() {
+    this.setState({
+      latLngDetail: '',
+      lengthDetail: '',
+      disBtwDetail: '',
+      areaDetail: '',
+    })
   }
   onAddListenerMarkerBtn() {
     this.onUtilitiesMethod()
@@ -170,6 +183,7 @@ class App extends Component {
       this.onSetMarkerOptions()
       this.handleOptionOpen()
       this.onClearSomeMapEventListener()
+      this.addMouseMoveOnMap()
       this.onSetDrawingCursor()
       this.drawMarker()
     }
@@ -180,6 +194,7 @@ class App extends Component {
       this.onSetPolyOptions()
       this.handleOptionOpen()
       this.onClearSomeMapEventListener()
+      this.addMouseMoveOnMap()
       this.onSetDrawingCursor()
       this.drawPolygon()
     }
@@ -190,6 +205,7 @@ class App extends Component {
       this.onSetPolyOptions()
       this.handleOptionOpen()
       this.onClearSomeMapEventListener()
+      this.addMouseMoveOnMap()
       this.onSetDrawingCursor()
       this.drawPolyline()
     }
@@ -200,7 +216,8 @@ class App extends Component {
     this.onUtilitiesMethod()
     this.onSetDragMapCursor()
     this.setState({
-      btnTypeCheck: ''
+      btnTypeCheck: '',
+      panelName: 'จับ',
     })
   }
   drawMarker() {
@@ -295,7 +312,7 @@ class App extends Component {
     this.onResetSelectedOverlay()
     if (overlay.overlayType === 'polygon' || overlay.overlayType === 'polyline') {
       overlay.setOptions({ editable: true, })
-      this.setState({ selectedOverlay: overlay })
+      this.setState({ selectedOverlay: overlay, })
     }
     if (overlay.overlayType === 'marker') {
       overlay.setOptions({ draggable: true, })
@@ -307,6 +324,7 @@ class App extends Component {
     }
   }
   onResetSelectedOverlay() {
+    this.onResetDetail()
     const { selectedOverlay } = this.state
     if (selectedOverlay !== null) {
       if (selectedOverlay.overlayType === 'polygon' || selectedOverlay.overlayType === 'polyline') {
@@ -347,12 +365,14 @@ class App extends Component {
       self.onOverlayOptionsOpen()
       self.onSetSelectOverlay(polygon)
       self.onPolyLengthComputeForOverlay()
+      self.onSquereMetersTrans()
     })
     window.google.maps.event.addListener(polygon, 'mouseup', function (event) {
       if (event.vertex !== undefined || event.edge !== undefined) {
         self.onPolyCoordsEdit(polygon)
         self.onPolyLengthComputeForOverlay()
         self.onPolydistanceBtwComputeForOverlay()
+        self.onSquereMetersTrans()
       }
     })
   }
@@ -380,22 +400,10 @@ class App extends Component {
       let clickLat = clickEvent.latLng.lat()
       let clickLng = clickEvent.latLng.lng()
       self.setState({
-        exampleLineCoords: [{ lat: clickLat, lng: clickLng }, { lat: mousemoveLat, lng: mousemoveLng }]
+        exampleLineCoords: [{ lat: clickLat, lng: clickLng }, { lat: mousemoveLat, lng: mousemoveLng }],
+        disBtwDetail: window.google.maps.geometry.spherical.computeDistanceBetween(clickEvent.latLng, event.latLng).toFixed(3),
       })
     })
-  }
-  onDrawExamplePolygon(coords) {
-    // let { examplePolygonCoords } = this.state
-    // let length = examplePolygonCoords.length
-    // var self = this
-    // window.google.maps.event.addListener(window.map, 'mousemove', function (event) {
-    //   let mousemoveLat = event.latLng.lat()
-    //   let mousemoveLng = event.latLng.lng()
-    //   let mlatlng = { lat: mousemoveLat, lng: mousemoveLng }
-    //   self.setState({
-    //     examplePolygonCoords: coords
-    //   }, () => console.log(self.state.examplePolygonCoords))
-    //})
   }
   onPolyCoordsEdit(polygon) {
     let overlayCoords = this.state.overlayObject
@@ -436,17 +444,14 @@ class App extends Component {
       let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng)
       sumLength += endTostartDis
     }
-    console.log('ความยาวรวม', sumLength.toFixed(3), 'เมตร')
-
+    this.setState({ lengthDetail: sumLength.toFixed(3) })
   }
   onPolydistanceBtwComputeForCoords() {
     var { distanceDetail, overlayObject, isFirstDraw, overlayIndex } = this.state
     var currentCoords = overlayObject[overlayObject.length - 1].coords
     if (isFirstDraw === true) {
       distanceDetail.push({ detail: [], overlayIndex })
-      console.log('ce')
     } else {
-      console.log('re')
       var currentDetial = distanceDetail[distanceDetail.length - 1]
       currentDetial.detail = []
       this.setState({ distanceDetail })
@@ -459,6 +464,7 @@ class App extends Component {
         currentDetial.detail.push({
           midpoint: { lat: (endPoint.lat + prevEndPoint.lat) / 2, lng: (endPoint.lng + prevEndPoint.lng) / 2 },
           disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, prevEndLatLng),
+          id: shortid.generate(),
         })
       }
 
@@ -469,7 +475,8 @@ class App extends Component {
         let startLatLng = new window.google.maps.LatLng(startPoint);
         currentDetial.detail.push({
           midpoint: { lat: (endPoint.lat + startPoint.lat) / 2, lng: (endPoint.lng + startPoint.lng) / 2 },
-          disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng)
+          disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng),
+          id: shortid.generate(),
         })
       }
       this.setState({ distanceDetail })
@@ -485,7 +492,7 @@ class App extends Component {
       let endTostartDis = window.google.maps.geometry.spherical.computeDistanceBetween(start, end)
       sumLength += endTostartDis
     }
-    console.log('ความยาวรวม', sumLength.toFixed(3), 'เมตร')
+    this.setState({ lengthDetail: sumLength.toFixed(3) })
   }
   onPolydistanceBtwComputeForOverlay() {
     var { distanceDetail, selectedOverlay, } = this.state
@@ -511,6 +518,7 @@ class App extends Component {
       currentDetial.detail.push({
         midpoint: { lat: (endPoint.lat + prevEndPoint.lat) / 2, lng: (endPoint.lng + prevEndPoint.lng) / 2 },
         disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, prevEndLatLng),
+        id: shortid.generate()
       })
     }
     if (selectedOverlay.overlayType === 'polygon') {
@@ -520,13 +528,15 @@ class App extends Component {
       let startLatLng = new window.google.maps.LatLng(startPoint);
       currentDetial.detail.push({
         midpoint: { lat: (endPoint.lat + startPoint.lat) / 2, lng: (endPoint.lng + startPoint.lng) / 2 },
-        disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng)
+        disBtw: window.google.maps.geometry.spherical.computeDistanceBetween(endLatLng, startLatLng),
+        id: shortid.generate()
       })
     }
     this.setState({ distanceDetail })
   }
-  onSquereMetersTrans(polygon) {
-    var area = window.google.maps.geometry.spherical.computeArea(polygon.getPath())
+  onSquereMetersTrans() {
+    const { selectedOverlay } = this.state
+    var area = window.google.maps.geometry.spherical.computeArea(selectedOverlay.getPath())
     let rnwString = ''
     var rai, ngan, wa, raiFraction, nganFraction
 
@@ -540,7 +550,7 @@ class App extends Component {
     if (ngan > 0) { rnwString = rnwString + ngan + ' งาน ' }
     if (wa > 0) { rnwString = rnwString + wa + ' ตารางวา ' }
     else { rnwString = '0 ตารางวา' }
-    return console.log('พื้นที่คือ ', rnwString)
+    this.setState({ areaDetail: rnwString })
   }
   onSaveToFirestore() {
     let self = this
@@ -612,7 +622,7 @@ class App extends Component {
       LatLngString = 'lattitude : ' + position.coords.latitude.toFixed(4) + ' , ' + 'longtitude : ' + position.coords.longitude.toFixed(4)
       this.setState({
         userLocationCoords: [{ lat: position.coords.latitude, lng: position.coords.longitude }],
-        panelDetail: LatLngString,
+        latLngDetail: LatLngString,
         panelName: 'Your Location'
       })
     })
@@ -769,7 +779,6 @@ class App extends Component {
           display: 'flex',
         }}
       >
-      <input id="pac-input" class="controls" type="text" placeholder="Find place"/>
         <MapClass
           left={this.state.left}
           bottom={this.state.bottom}
@@ -844,6 +853,7 @@ class App extends Component {
           {this.state.userLocationCoords.map(value => {
             return (
               <UserLocationMarker
+                key={value}
                 userLocationCoords={value}
                 addUserMarkerListener={this.addUserMarkerListener}
               />
@@ -858,10 +868,12 @@ class App extends Component {
             onAddPlan={this.onAddPlan}
           />
           {this.state.distanceDetail.map(value => {
+
             return (
               value.detail.map(value2 => {
                 return (
                   <TransparentMaker
+                    key={value2.id}
                     midpoint={value2.midpoint}
                     disBtw={value2.disBtw}
                   />

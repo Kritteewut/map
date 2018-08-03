@@ -42,6 +42,7 @@ class SearchBox extends Component {
 
       // For each place, get the icon, name and location.
       this.bounds = new window.google.maps.LatLngBounds();
+      console.log("place",places);
       places.forEach((place) => {
         if (!place.geometry) {
           console.log("Returned place contains no geometry");
@@ -72,7 +73,7 @@ class SearchBox extends Component {
       });
       window.map.fitBounds(this.bounds);
     });
-   
+
   }
 
   render() {

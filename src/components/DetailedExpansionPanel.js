@@ -38,7 +38,8 @@ class DetailedExpansionPanel extends Component {
   }
   render() {
     const { classes } = this.props;
-    const { panelName, panelDetail } = this.props
+    const { panelName, latLngDetail, lengthDetail, disBtwDetail, areaDetail } = this.props
+    
     return (
       <div className={classes.root}>
         <ExpansionPanel >
@@ -47,9 +48,37 @@ class DetailedExpansionPanel extends Component {
               <Typography className={classes.heading}>{panelName}</Typography>
             </div>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails className={classes.details}>
-            <Typography>{panelDetail}</Typography>
-          </ExpansionPanelDetails>
+
+          {(latLngDetail !== '') ?
+            <ExpansionPanelDetails className={classes.details}>
+              <Typography>{latLngDetail}</Typography>
+            </ExpansionPanelDetails>
+            :
+            null
+          }
+          {(disBtwDetail !== '') ?
+            <ExpansionPanelDetails className={classes.details}>
+              <Typography>ระยะห่างระหว่างจุด : {disBtwDetail} เมตร</Typography>
+            </ExpansionPanelDetails>
+            :
+            null
+          }
+          {(lengthDetail !== '') ?
+            <ExpansionPanelDetails className={classes.details}>
+              <Typography>
+                ความยาวรวม : {lengthDetail} เมตร
+              </Typography>
+              {(areaDetail !== '') ?
+                <Typography>
+                  พื้นที่คือ : {areaDetail}
+                </Typography>
+                :
+                null
+              }
+            </ExpansionPanelDetails>
+            :
+            null
+          }
           <Divider />
         </ExpansionPanel>
       </div>

@@ -8,21 +8,17 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Lock from '@material-ui/icons/Lock';
-import Drawer from '@material-ui/core/Drawer';
-import PermanentDrawer from './Navigation'
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
+import Button from '@material-ui/core/Button';
+import Register from './Register';
+import Reset from './Reset';
 
-const drawerWidth = '25vw';
 
 const styles = theme => ({
-    drawerPaper: {
-        position: 'relative',
-        width: drawerWidth,
+    button: {
+        margin: theme.spacing.unit,
     },
-    inputLogin: {
-        textAlign: 'center'
-    }
 });
 
 class Login extends Component {
@@ -43,11 +39,14 @@ class Login extends Component {
             user: this.props.user,
             email: '',
             password: '',
+            page: 'login',
         };
         this.loginFacebook = this.loginFacebook.bind(this);
         this.loginGoogle = this.loginGoogle.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.loginEmail = this.loginEmail.bind(this);
+        this.changePage = this.changePage.bind(this);
+
     }
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value });
@@ -61,7 +60,7 @@ class Login extends Component {
             console.log(email);
             console.log(password);
             this.setState({
-               email: email
+                email: email
             });
             this.props.onSetUser(email)
         }).catch((error) => {
@@ -96,61 +95,86 @@ class Login extends Component {
 
     }
 
+    changePage(pageChange, pagelogin) {
+        this.setState({
+            page: pageChange || pagelogin
+        })
+        console.log(pageChange, 'Page')
+    }
+
     componentWillMount() {
         auth.onAuthStateChanged((user) => {
             if (user) {
                 this.setState({ user });
             }
+
         });
     }
 
     render() {
-        return (
-            //loading container wrapper LoginFont
-            <div className="loading container wrapper LoginFont">
-                <p class="logo"><img src={logo} className="App-logo" alt="logo" />
-                    <br /> Ling Map </p>
-                <div class="inputLogin">
-                    <FormControl component="fieldset">
-                        <FormGroup>
-                            <Grid container spacing={8} alignItems="flex-end">
-                                <Grid item>
-                                    <AccountCircle />
-                                </Grid>
-                                <Grid item>
-                                    <TextField value={this.state.email} onChange={this.handleChange} name="email" type="email" id="input-with-icon-grid" label="อีเมล" />
-                                </Grid>
-                            </Grid>
-                        </FormGroup>
-                        <FormGroup>
-                            <Grid container spacing={8} alignItems="flex-end">
-                                <Grid item>
-                                    <Lock />
-                                </Grid>
-                                <Grid item>
-                                    <TextField value={this.state.password} onChange={this.handleChange} name="password" type="password" id="input-with-icon-grid" label="ป้อนรหัสผ่าน" />
-                                </Grid>
-                            </Grid>
-                        </FormGroup>
-                    </FormControl>
-                </div>
-                <br />
-                <div class="LoginButton">
-                    <button type="submit" onClick={this.loginEmail} class="loginBtn loginBtn--L">&nbsp;Log In with email</button>
-                    <br />
-                    <p class='Or'> or </p>
+        const { classes } = this.props;
+        switch (this.state.page) {
+            case 'login':
+                return (
+                    //loading container wrapper LoginFont
+                    <div className="loading container wrapper LoginFont">
+                        <p className="logo"><img src={logo} className="App-logo" alt="logo" />
+                            <br /> Ling Map </p>
+                        <div className="inputLogin">
+                            <FormControl component="fieldset">
+                                <FormGroup>
+                                    <Grid container spacing={8} alignItems="flex-end">
+                                        <Grid item>
+                                            <AccountCircle />
+                                        </Grid>
+                                        <Grid item>
+                                            <TextField value={this.state.email} onChange={this.handleChange} name="email" type="email" label="อีเมล" />
+                                        </Grid>
+                                    </Grid>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Grid container spacing={8} alignItems="flex-end">
+                                        <Grid item>
+                                            <Lock />
+                                        </Grid>
+                                        <Grid item>
+                                            <TextField value={this.state.password} onChange={this.handleChange} name="password" type="password" label="ป้อนรหัสผ่าน" />
+                                        </Grid>
+                                    </Grid>
+                                </FormGroup>
+                            </FormControl>
+                        </div>
+                        <br />
+                        <div className="LoginButton">
+                            <button type="submit" onClick={this.loginEmail} className="loginBtn loginBtn--L">&nbsp;Log In with email</button>
+                            <br />
+                            <p className='Or'> or </p>
 
-                    <button className="loginBtn loginBtn--facebook" onClick={this.loginFacebook}> Log In with Facebook</button>
-                    <button className="loginBtn loginBtn--google" onClick={this.loginGoogle}>Log In with Google</button><br />
-                </div>
-                <br />
-                <div class="regisBtn">
-                    สมัครสมาชิก&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-           ลืมรหัสผ่าน
+                            <button className="loginBtn loginBtn--facebook" onClick={this.loginFacebook}>Log In with Facebook</button>
+                            <button className="loginBtn loginBtn--google" onClick={this.loginGoogle}>Log In with Google</button><br />
+                        </div>
+                        <br />
+                        <div className="regisBtn">
+                            <Button onClick={() => this.changePage('register')} className={classes.button}>สมัครสมาชิก</Button>
+                            <Button onClick={() => this.changePage('reset')} className={classes.button}>ลืมรหัสผ่าน</Button>
+                        </div>
+                        <br /> <br />
                     </div>
-                <br /> <br />
-            </div>
-        )
+                )
+            case 'register':
+                return (
+                    <Register
+                        changePage={this.changePage}
+                    />
+                )
+            case 'reset':
+                return (
+                    <Reset
+                        changePage={this.changePage}
+                    />
+                )
+            default: return null
+        }
     }
 }
 

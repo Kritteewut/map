@@ -32,6 +32,7 @@ class TransparentMaker extends Component {
                     //fontWeight: 'Lightest',
                 },
             })
+            console.log(disBtw)
         }
     }
     render() {
